@@ -1,9 +1,11 @@
 from time import sleep
+import hashing
 import pickling
 import preprocessing
 from functools import update_wrapper
-from os import makedirs
-from os.path import exists
+from os import makedirs, remove, listdir
+from os.path import exists, join
+from re import compile
 
 
 def persist(func=None,
@@ -17,7 +19,7 @@ def persist(func=None,
         def __init__(self, func):
             update_wrapper(self, func)
             self._func = func
-            self._hash = hash
+            self._hash = hashing.hash
             self._dir = dir + '/' + func.__name__
             if not exists(self._dir):
                 makedirs(self._dir)
@@ -47,7 +49,16 @@ def persist(func=None,
             return k
 
         def filename(self, h):
-            return '%s/_%s.out' % (self._dir, h)
+            return '%s/%s.out' % (self._dir, h)
+
+        def clear(self):
+            reg = compile(r'^[-_0-9A-Za-z]*={,3}\.out$')
+            for f in listdir(self._dir):
+                path = join(self._dir, f)
+                if reg.match(f) is None:
+                    raise PersistError(path)
+                else:
+                    remove(path)
 
     if func is None:
         # @persist(...)
@@ -55,6 +66,10 @@ def persist(func=None,
     else:
         # @persist
         return persist_wrapper(func)
+
+
+class PersistError(Exception):
+    """Exception for errors to do with persistent memoisation"""
 
 
 @persist(dir='dirfortriple')
