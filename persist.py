@@ -31,12 +31,12 @@ def persist(func=None,
             h = self._hash(key)
             fname = self.filename(h)
             if exists(fname):
-                print(f'''Retrieving cached value for {key} (in {dir}). . .''')
+                print(f'''Retrieving cached value for {key} (in {dir})''')
                 file = open(fname, 'r')
                 val = self._unpickle(file.read())
                 file.close()
             else:
-                print(f'''Computing value for {key} . . .''')
+                print(f'''Computing value for {key}''')
                 val = self._func(*args, **kwargs)
                 print(f'''Writing to {fname} . . .''')
                 file = open(fname, 'w')
@@ -85,6 +85,6 @@ def double(x):
 
 
 @persist
-def foo(x, y, z=1, a=3):
+def foo(x, y, z=1, *, a=3):
     print(x, y, z, a)
     return x + y + z + a
