@@ -2,7 +2,13 @@ from inspect import getfullargspec
 
 
 def arg_tuple(func, *args, **kwargs):
+    kwargs = kwargs.copy()
+
     spec = getfullargspec(func)
+
+    # Check for too many arguments
+    if len(args) > len(spec.args):
+        func(*args, **kwargs)  # throws TypeError with useful message
 
     # Convert args to kwargs
     kwargs.update(dict(zip(spec.args, args)))
