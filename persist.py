@@ -9,7 +9,8 @@ from re import compile
 
 
 def persist(func=None,
-            dir='persist',
+            basedir='persist',
+            funcdir=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             format_args=None):
@@ -20,7 +21,12 @@ def persist(func=None,
             update_wrapper(self, func)
             self._func = func
             self._hash = hashing.hash
-            self._dir = dir + '/' + func.__name__
+            self._basedir = basedir
+            if funcdir is None:
+                self._funcdir = func.__name__
+            else:
+                self._funcdir = funcdir
+            self._dir = self._basedir + '/' + self._funcdir
             if not exists(self._dir):
                 makedirs(self._dir)
             self._pickle = pickle
@@ -73,7 +79,7 @@ class PersistError(Exception):
     """Exception for errors to do with persistent memoisation"""
 
 
-@persist(dir='dirfortriple')
+@persist(basedir='dirfortriple')
 def triple(x):
     sleep(1)
     return 3 * x
@@ -85,7 +91,7 @@ def double(x):
     return 2 * x
 
 
-@persist
+@persist(funcdir='foofighters')
 def foo(x, y, z=1, *, a=3):
     print(x, y, z, a)
     return x + y + z + a
