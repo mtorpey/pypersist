@@ -9,7 +9,7 @@ from re import compile
 
 
 def persist(func=None,
-            dir='persist',
+            basedir='persist',
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             format_args=None):
@@ -20,9 +20,9 @@ def persist(func=None,
             update_wrapper(self, func)
             self._func = func
             self._hash = hashing.hash
-            self._dir = dir + '/' + func.__name__
-            if not exists(self._dir):
-                makedirs(self._dir)
+            self._basedir = basedir + '/' + func.__name__
+            if not exists(self._basedir):
+                makebasedirs(self._basedir)
             self._pickle = pickle
             self._unpickle = unpickle
 
@@ -50,12 +50,12 @@ def persist(func=None,
             return k
 
         def filename(self, h):
-            return '%s/%s.out' % (self._dir, h)
+            return '%s/%s.out' % (self._basedir, h)
 
         def clear(self):
             reg = compile(r'^[-_0-9A-Za-z]*={,3}\.out$')
-            for f in listdir(self._dir):
-                path = join(self._dir, f)
+            for f in listdir(self._basedir):
+                path = join(self._basedir, f)
                 if reg.match(f) is None:
                     raise PersistError(path)
                 else:
@@ -73,7 +73,7 @@ class PersistError(Exception):
     """Exception for errors to do with persistent memoisation"""
 
 
-@persist(dir='dirfortriple')
+@persist(basedir='dirfortriple')
 def triple(x):
     sleep(1)
     return 3 * x
