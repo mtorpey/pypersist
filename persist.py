@@ -31,14 +31,15 @@ def persist(func=None,
             h = self._hash(key)
             fname = self.filename(h)
             if exists(fname):
-                print(f'''Retrieving cached value for {key} (in {dir})''')
+                print(f'''Retrieving cached value for {key}''')
+                print(f'''Reading from {fname}''')
                 file = open(fname, 'r')
                 val = self._unpickle(file.read())
                 file.close()
             else:
                 print(f'''Computing value for {key}''')
                 val = self._func(*args, **kwargs)
-                print(f'''Writing to {fname} . . .''')
+                print(f'''Writing to {fname}''')
                 file = open(fname, 'w')
                 file.write(self._pickle(val))
                 file.close()
