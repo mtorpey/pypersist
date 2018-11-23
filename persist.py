@@ -12,6 +12,7 @@ def persist(func=None,
             funcdir=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
+            hash=hashing.hash,
             key=None):
 
     class persist_wrapper:
@@ -19,7 +20,7 @@ def persist(func=None,
         def __init__(self, func):
             update_wrapper(self, func)
             self._func = func
-            self._hash = hashing.hash
+            self._hash = hash
             self._basedir = basedir
             if funcdir is None:
                 self._funcdir = func.__name__
