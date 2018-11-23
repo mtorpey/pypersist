@@ -8,7 +8,10 @@ def arg_tuple(func, *args, **kwargs):
 
     # Check for too many arguments
     if len(args) > len(spec.args):
-        func(*args, **kwargs)  # throws TypeError with useful message
+        if spec.varargs is None:
+            func(*args, **kwargs)  # throws TypeError with useful message
+        else:
+            kwargs['*' + spec.varargs] = args[len(spec.args):]  # record varargs
 
     # Convert args to kwargs
     kwargs.update(dict(zip(spec.args, args)))
