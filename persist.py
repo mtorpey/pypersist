@@ -12,7 +12,7 @@ def persist(func=None,
             funcdir=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
-            format_args=None):
+            key=None):
 
     class persist_wrapper:
 
@@ -30,9 +30,13 @@ def persist(func=None,
                 makedirs(self._dir)
             self._pickle = pickle
             self._unpickle = unpickle
+            if key is None:
+                self._key = self.default_key
+            else:
+                self._key = key
 
         def __call__(self, *args, **kwargs):
-            key = self.key(*args, **kwargs)
+            key = self._key(*args, **kwargs)
             h = self._hash(key)
             fname = self.filename(h)
             if exists(fname):
@@ -50,9 +54,8 @@ def persist(func=None,
                 file.close()
             return val
 
-        def key(self, *args, **kwargs):
-            k = preprocessing.arg_tuple(self._func, *args, **kwargs)
-            return k
+        def default_key(self, *args, **kwargs):
+            return preprocessing.arg_tuple(self._func, *args, **kwargs)
 
         def filename(self, h):
             return '%s/%s.out' % (self._dir, h)
