@@ -1,4 +1,3 @@
-from time import sleep
 import hashing
 import pickling
 import preprocessing
@@ -77,21 +76,3 @@ def persist(func=None,
 
 class PersistError(Exception):
     """Exception for errors to do with persistent memoisation"""
-
-
-@persist(basedir='dirfortriple')
-def triple(x):
-    sleep(1)
-    return 3 * x
-
-
-@persist(pickle=repr, unpickle=eval)
-def double(x):
-    sleep(1)
-    return 2 * x
-
-
-@persist(funcdir='foofighters')
-def foo(x, y, z=1, *, a=3):
-    print(x, y, z, a)
-    return x + y + z + a
