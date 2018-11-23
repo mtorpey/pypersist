@@ -26,7 +26,7 @@ def persist(func=None,
                 self._funcdir = func.__name__
             else:
                 self._funcdir = funcdir
-            self._dir = self._basedir + '/' + self._funcdir
+            self._dir = join(self._basedir, self._funcdir)
             if not exists(self._dir):
                 makedirs(self._dir)
             self._pickle = pickle
