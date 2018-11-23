@@ -61,13 +61,10 @@ def persist(func=None,
             return '%s/%s.out' % (self._dir, h)
 
         def clear(self):
-            reg = compile(r'^[-_0-9A-Za-z]*={,3}\.out$')
             for f in listdir(self._dir):
                 path = join(self._dir, f)
-                if reg.match(f) is None:
-                    raise PersistError(path)
-                else:
-                    remove(path)
+                # TODO: safety checks?
+                remove(path)
 
     if func is None:
         # @persist(...)
