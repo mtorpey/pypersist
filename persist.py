@@ -13,7 +13,8 @@ def persist(func=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             hash=hashing.hash,
-            key=None):
+            key=None,
+            storekey=False):
 
     class persist_wrapper:
 
@@ -44,6 +45,12 @@ def persist(func=None,
                 print(f'''Retrieving cached value for {key}''')
                 print(f'''Reading from {fname}''')
                 file = open(fname, 'r')
+                if storekey:
+                    storedkey = self._unpickle(file.readline().rstrip('\n'))
+                    if storedkey == key:
+                        print('Key verified')
+                    else:
+                        raise PersistError(storedkey, key)
                 val = self._unpickle(file.read())
                 file.close()
             else:
@@ -51,6 +58,9 @@ def persist(func=None,
                 val = self._func(*args, **kwargs)
                 print(f'''Writing to {fname}''')
                 file = open(fname, 'w')
+                if storekey:
+                    file.write(self._pickle(key))
+                    file.write('\n')
                 file.write(self._pickle(val))
                 file.close()
             return val
