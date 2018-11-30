@@ -89,9 +89,8 @@ def persist(func=None,
                 self._dir = dir
 
             def __getitem__(self, key):
-                # TODO: handle key if necessary
-                h = self._func._hash(key)
-                fname = self._filename(h)
+                # TODO: handle stored key if necessary
+                fname = self._key_to_fname(key)
                 if exists(fname):
                     file = open(fname, 'r')
                     val = self._func._unpickle(file.read())
@@ -101,16 +100,14 @@ def persist(func=None,
                 return val
 
             def __setitem__(self, key, val):
-                # TODO: handle key if necessary
-                h = self._func._hash(key)
-                fname = self._filename(h)
+                # TODO: handle stored key if necessary
+                fname = self._key_to_fname(key)
                 file = open(fname, 'w')
                 file.write(self._func._pickle(key))
                 file.close()
 
             def __delitem__(self, key):
-                h = self._func._hash(key)
-                fname = self._filename(h)
+                fname = self._key_to_fname(key)
                 if exists(fname):
                     remove(fname)
                 else:
@@ -120,7 +117,8 @@ def persist(func=None,
                 # TODO: try to filter non-cache files?
                 return len(listdir(self._dir))
 
-            def _filename(self, h):
+            def _key_to_fname(self, key):
+                h = self._func._hash(key)
                 return '%s/%s.out' % (self._dir, h)
 
 
