@@ -5,6 +5,7 @@ from functools import update_wrapper
 from os import makedirs, remove, listdir
 from os.path import exists, join
 from re import compile
+from collections.abc import MutableMapping, Iterator
 
 
 def persist(func=None,
@@ -36,6 +37,10 @@ def persist(func=None,
                 self._key = self.default_key
             else:
                 self._key = key
+            if storekey:
+                self.cache = self.DiskCacheWithKeys(self, self._dir)
+            else:
+                self.cache = self.DiskCache(self, self._dir)
 
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)
@@ -76,6 +81,69 @@ def persist(func=None,
                 path = join(self._dir, f)
                 # TODO: safety checks?
                 remove(path)
+
+
+        class DiskCache:
+            def __init__(self, func, dir):
+                self._func = func
+                self._dir = dir
+
+            def __getitem__(self, key):
+                # TODO: handle key if necessary
+                h = self._func._hash(key)
+                fname = self._filename(h)
+                if exists(fname):
+                    file = open(fname, 'r')
+                    val = self._func._unpickle(file.read())
+                    file.close()
+                else:
+                    raise KeyError(key)
+                return val
+
+            def __setitem__(self, key, val):
+                # TODO: handle key if necessary
+                h = self._func._hash(key)
+                fname = self._filename(h)
+                file = open(fname, 'w')
+                file.write(self._func._pickle(key))
+                file.close()
+
+            def __delitem__(self, key):
+                h = self._func._hash(key)
+                fname = self._filename(h)
+                if exists(fname):
+                    remove(fname)
+                else:
+                    raise KeyError(key)
+
+            def __len__(self):
+                # TODO: try to filter non-cache files?
+                return len(listdir(self._dir))
+
+            def _filename(self, h):
+                return '%s/%s.out' % (self._dir, h)
+
+
+        class DiskCacheWithKeys(DiskCache, MutableMapping):
+            def __iter__(self):
+                return self.KeysIter(self)
+
+            class KeysIter(Iterator):
+                def __init__(self, cache):
+                    self._cache = cache
+                    self._files = listdir(self._cache._dir)
+                    self._pos = 0
+
+                def __next__(self):
+                    if self._pos >= len(self._files):
+                        raise StopIteration
+                    fname = join(self._cache._dir, self._files[self._pos])
+                    self._pos += 1
+                    file = open(fname, 'r')
+                    key = self._cache._func._unpickle(file.readline().rstrip('\n'))
+                    file.close()
+                    return key
+
 
     if func is None:
         # @persist(...)
