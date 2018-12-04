@@ -11,7 +11,7 @@ def arg_tuple(func, *args, **kwargs):
         if spec.varargs is None:
             func(*args, **kwargs)  # throws TypeError with useful message
         else:
-            kwargs['*' + spec.varargs] = args[len(spec.args):]  # record varargs
+            kwargs['*' + spec.varargs] = args[len(spec.args):]  # add varargs
 
     # Convert args to kwargs
     kwargs.update(dict(zip(spec.args, args)))
