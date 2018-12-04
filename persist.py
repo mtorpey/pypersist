@@ -23,14 +23,6 @@ def persist(func=None,
             update_wrapper(self, func)
             self._func = func
             self._hash = hash
-            self._basedir = basedir
-            if funcdir is None:
-                self._funcdir = func.__name__
-            else:
-                self._funcdir = funcdir
-            self._dir = join(self._basedir, self._funcdir)
-            if not exists(self._dir):
-                makedirs(self._dir)
             self._pickle = pickle
             self._unpickle = unpickle
             if key is None:
@@ -38,61 +30,49 @@ def persist(func=None,
             else:
                 self._key = key
             if storekey:
-                self.cache = self.DiskCacheWithKeys(self, self._dir)
+                constr = self.DiskCacheWithKeys
             else:
-                self.cache = self.DiskCache(self, self._dir)
+                constr = self.DiskCache
+            self.cache = constr(self, basedir, funcdir, storekey)
 
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)
-            h = self._hash(key)
-            fname = self.filename(h)
-            if exists(fname):
-                print(f'''Retrieving cached value for {key}''')
-                print(f'''Reading from {fname}''')
-                file = open(fname, 'r')
-                if storekey:
-                    storedkey = self._unpickle(file.readline().rstrip('\n'))
-                    if storedkey == key:
-                        print('Key verified')
-                    else:
-                        raise PersistError(storedkey, key)
-                val = self._unpickle(file.read())
-                file.close()
-            else:
-                print(f'''Computing value for {key}''')
+            try:
+                val = self.cache[key]
+            except KeyError:
                 val = self._func(*args, **kwargs)
-                print(f'''Writing to {fname}''')
-                file = open(fname, 'w')
-                if storekey:
-                    file.write(self._pickle(key))
-                    file.write('\n')
-                file.write(self._pickle(val))
-                file.close()
+                self.cache[key] = val
             return val
 
         def default_key(self, *args, **kwargs):
             return preprocessing.arg_tuple(self._func, *args, **kwargs)
 
-        def filename(self, h):
-            return '%s/%s.out' % (self._dir, h)
-
         def clear(self):
-            for f in listdir(self._dir):
-                path = join(self._dir, f)
-                # TODO: safety checks?
-                remove(path)
-
+            self.cache.clear()
 
         class DiskCache:
-            def __init__(self, func, dir):
+            def __init__(self, func, basedir, funcdir=None, storekey=False):
                 self._func = func
-                self._dir = dir
+                self._basedir = basedir
+                if funcdir is None:
+                    self._funcdir = func.__name__
+                else:
+                    self._funcdir = funcdir
+                self._dir = join(self._basedir, self._funcdir)
+                if not exists(self._dir):
+                    makedirs(self._dir)
 
             def __getitem__(self, key):
-                # TODO: handle stored key if necessary
                 fname = self._key_to_fname(key)
                 if exists(fname):
                     file = open(fname, 'r')
+                    if storekey:
+                        keystring = file.readline().rstrip('\n')
+                        storedkey = self._func._unpickle(keystring)
+                        if storedkey == key:
+                            print('Key verified')
+                        else:
+                            raise PersistError(storedkey, key)
                     val = self._func._unpickle(file.read())
                     file.close()
                 else:
@@ -100,10 +80,12 @@ def persist(func=None,
                 return val
 
             def __setitem__(self, key, val):
-                # TODO: handle stored key if necessary
                 fname = self._key_to_fname(key)
                 file = open(fname, 'w')
-                file.write(self._func._pickle(key))
+                if storekey:
+                    file.write(self._func._pickle(key))
+                    file.write('\n')
+                file.write(self._func._pickle(val))
                 file.close()
 
             def __delitem__(self, key):
@@ -117,10 +99,15 @@ def persist(func=None,
                 # TODO: try to filter non-cache files?
                 return len(listdir(self._dir))
 
+            def clear(self):
+                for f in listdir(self._dir):
+                    path = join(self._dir, f)
+                    # TODO: safety checks?
+                    remove(path)
+
             def _key_to_fname(self, key):
                 h = self._func._hash(key)
                 return '%s/%s.out' % (self._dir, h)
-
 
         class DiskCacheWithKeys(DiskCache, MutableMapping):
             def __iter__(self):
@@ -138,10 +125,10 @@ def persist(func=None,
                     fname = join(self._cache._dir, self._files[self._pos])
                     self._pos += 1
                     file = open(fname, 'r')
-                    key = self._cache._func._unpickle(file.readline().rstrip('\n'))
+                    string = file.readline().rstrip('\n')
+                    key = self._cache._func._unpickle(string)
                     file.close()
                     return key
-
 
     if func is None:
         # @persist(...)
