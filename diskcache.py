@@ -26,7 +26,7 @@ class DiskCache:
                 if storedkey == key:
                     print('Key verified')
                 else:
-                    raise PersistError(storedkey, key)
+                    raise HashCollisionError(storedkey, key)
             val = self._func._unpickle(file.read())
             file.close()
         else:
@@ -84,3 +84,6 @@ class DiskCacheWithKeys(DiskCache, MutableMapping):
             key = self._cache._func._unpickle(string)
             file.close()
             return key
+
+class HashCollisionError(Exception):
+    """Exception for when two different keys hash to the same value"""
