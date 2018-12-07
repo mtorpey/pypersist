@@ -8,11 +8,11 @@ from functools import update_wrapper
 def persist(func=None,
             basedir='persist',
             funcdir=None,
+            key=None,
+            storekey=False,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
-            hash=hashing.hash,
-            key=None,
-            storekey=False):
+            hash=hashing.hash):
 
     class persist_wrapper:
 
