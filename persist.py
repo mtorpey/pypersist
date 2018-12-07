@@ -61,6 +61,16 @@ def persist(func=None,
         base 64 encoding, which can store 10^22 objects with a <0.01% chance of
         a collision.
 
+    Attributes
+    ----------
+    cache : diskcache.DiskCache
+        Dictionary-like object that allows keys to be looked up and, if
+        present, gives the previously computed value.  Values can be added and
+        removed using the syntax `func.cache[key] = val` and
+        `del func.cache[key]`.  If `storekey` is true, this implements the
+        collections.abc.MutableMapping abstract base class and we can iterate
+        over its keys using `for key in func.cache`.
+
     Examples
     --------
     Simple persistence using default settings:
@@ -106,8 +116,10 @@ def persist(func=None,
             else:
                 self._key = key
             if storekey:
+                # can iterate over keys
                 constr = diskcache.DiskCacheWithKeys
             else:
+                # cannot iterate over keys
                 constr = diskcache.DiskCache
             self.cache = constr(self, basedir, funcdir, storekey)
 
