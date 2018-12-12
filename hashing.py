@@ -5,8 +5,9 @@ CHAR_ENCODING = 'utf-8'
 
 
 def hash(key):
-    """Returns a string which is a hash of the argument given.
+    """Return a string which is a hash of the argument given.
 
+    It computes the SHA-1 sum of the key and returns it as a base 64 string.
     The string consists of alphanumeric characters, hyphens, and underscores.
     """
     b = dumps(key)  # Pickle the key to a bytes object
