@@ -4,6 +4,41 @@ from collections.abc import MutableMapping, Iterator
 
 
 class DiskCache:
+    """Dictionary-like object for saving function outputs to disk
+
+    This cache, which can be used by the `persist` decorator in `persist.py`,
+    stores computed values to disk in a specified directory so that they can be
+    restored later using a key.  Like a dictionary, a key-value pair can be
+    added using `cache[key] = val`, looked up using `cache[key]`, and removed
+    using `del cache[key]`.  The number of values stored can be found using
+    `len(cache)`.
+
+    A DiskCache might not store its keys, and therefore we cannot iterate
+    through its keys as we can with a dictionary.  However, see
+    `DiskCacheWithKeys`.
+
+    Parameters
+    ----------
+    func : persist_wrapper
+        Memoised function whose results this is caching.  Options which are not
+        specific to local disk storage, such as the key, hash, and pickle
+        functions, are taken from this.
+    basedir : str
+        Directory into which to save results.  The same directory can be used
+        for several different functions.
+    funcdir : str, optional
+        Directory inside `basedir` into which the results for this specific
+        function should be stored.  Should be unique to avoid returning results
+        for the wrong function.  Default is the name of the function `func`.
+    storekey : bool, optional
+        Whether to store the key along with the output when a result is stored.
+        If True, the key will be checked when loading a value, to check for
+        hash collisions.  If False, two keys will produce the same output
+        whenever their `hash` values are the same.  If True is used, consider
+        using the subclass `DiskCacheWithKeys`.  Default is False.
+
+    """
+
     def __init__(self, func, basedir, funcdir=None, storekey=False):
         self._func = func
         self._basedir = basedir
@@ -54,6 +89,7 @@ class DiskCache:
         return len(listdir(self._dir))
 
     def clear(self):
+        """Delete all the results stored in this cache."""
         for f in listdir(self._dir):
             path = join(self._dir, f)
             # TODO: safety checks?
@@ -65,10 +101,20 @@ class DiskCache:
 
 
 class DiskCacheWithKeys(DiskCache, MutableMapping):
+    """Mutable mapping for saving function outputs to disk
+
+    This subclass of `DiskCache` can be used in place of `DiskCache` whenever
+    `storekeys` is True, to implement the `MutableMapping` abstract base class.
+    This allows the cache to be used exactly like a dictionary, including the
+    ability to iterate through all keys in the cache.
+
+    """
+
     def __iter__(self):
         return self.KeysIter(self)
 
     class KeysIter(Iterator):
+        """Iterator class for the keys of a `DiskCacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
             self._files = listdir(self._cache._dir)
