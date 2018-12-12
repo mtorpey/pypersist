@@ -42,18 +42,18 @@ def persist(func=None,
         value, to check for hash collisions.  If False, two keys will produce
         the same output whenever their `hash` values are the same.  Default is
         False.
-    pickle : function(object -> string), optional
+    pickle : function(object -> str), optional
         Function that converts the output of the function to a string for
         storage.  Should be the inverse of `unpickle`.  If `storekey` is true,
         this will also be used to store the key, and should do so without
         newline characters.  Default uses the `pickle` module and base 64
         encoding.
-    unpickle : function(string -> object), optional
+    unpickle : function(str -> object), optional
         Function that converts a string back to an object when retrieving a
         computed value from storage.  Should be the inverse of `pickle`.  If
         `storekey` is true, this will also be used to retrieve the key.
         Default uses the `pickle` module and base 64 encoding.
-    hash : function(object -> string), optional
+    hash : function(object -> str), optional
         Function that takes a key and produces a string that will be used to
         identify that key.  If this function is not injective, then `storekey`
         should be set to True to check for hash collisions.  The string should
