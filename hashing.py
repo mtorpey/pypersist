@@ -8,7 +8,7 @@ def hash(key):
     """Return a string which is a hash of the argument given.
 
     It computes the SHA-1 sum of the key and returns it as a base 64 string.
-    The string consists of alphanumeric characters, hyphens, and underscores.
+    The string consists of alphanumeric characters, hyphens and underscores.
     """
     b = dumps(key)  # Pickle the key to a bytes object
     b = sha1(b).digest()  # Hash the bytes using sha-1
