@@ -39,7 +39,7 @@ print(power(2,4))
 print(power(10,5))
 ```
 
-will store the outputs of `triple` in human-readable files with descriptive
+will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
 Many more options are available.  See the documentation in `persist.py` for a
