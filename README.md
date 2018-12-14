@@ -1,4 +1,46 @@
 # pymemo
 Persistent memoisation framework for Python
 
-When imported as a library, this allows functions to store their outputs permanently to disk (and in the future, to a database).
+Allows functions to store their outputs permanently to disk (and in the future,
+to a database), in a configurable way.
+
+## Examples
+To use, import the `persist` class from `persist.py`:
+
+```python
+from persist import persist
+```
+
+and use it as a decorator when writing a function:
+
+```python
+@persist
+def double(x):
+    return x*2
+
+print(double(3))
+print(double(6.5))
+```
+
+This will store the outputs of the `double` function in a directory called
+`persist/double/`, in a machine-readable format.
+
+One can specify various arguments to `persist`.  For example:
+
+```python
+@persist(key=lambda x,y: (x,y),
+         hash=lambda k: '%s_to_the_power_of_%s' % k,
+         pickle=str,
+         unpickle=int)
+def power(x, y):
+    return x ** y
+
+print(power(2,4))
+print(power(10,5))
+```
+
+will store the outputs of `triple` in human-readable files with descriptive
+filenames.
+
+Many more options are available.  See the documentation in `persist.py` for a
+full description.
