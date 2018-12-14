@@ -12,7 +12,8 @@ def persist(func=None,
             storekey=False,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
-            hash=hashing.hash):
+            hash=hashing.hash,
+            unhash=None):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -60,6 +61,10 @@ def persist(func=None,
         only contain characters safe for filenames.  Default uses SHA-1 and
         base 64 encoding, which can store 10^22 objects with a <0.01% chance of
         a collision.
+    unhash : function(str -> object), optional
+        Function that, if specified, should be the inverse of `hash`.  If this
+        is specified and `storekey` is false, it will be used whenever the keys
+        of `cache` are requested.  Default is None.
 
     Attributes
     ----------
@@ -67,9 +72,9 @@ def persist(func=None,
         Dictionary-like object that allows keys to be looked up and, if
         present, gives the previously computed value.  Values can be added and
         removed using the syntax `func.cache[key] = val` and
-        `del func.cache[key]`.  If `storekey` is true, this implements the
-        collections.abc.MutableMapping abstract base class and we can iterate
-        over its keys using `for key in func.cache`.
+        `del func.cache[key]`.  If `storekey` is True or `unhash` is specified,
+        this implements the collections.abc.MutableMapping abstract base class
+        and we can iterate over its keys using `for key in func.cache`.
 
     Examples
     --------
@@ -109,6 +114,7 @@ def persist(func=None,
             update_wrapper(self, func)
             self._func = func
             self._hash = hash
+            self._unhash = unhash
             self._pickle = pickle
             self._unpickle = unpickle
             if key is None:
@@ -116,8 +122,11 @@ def persist(func=None,
             else:
                 self._key = key
             if storekey:
-                # can iterate over keys
+                # can iterate over stored keys
                 constr = diskcache.DiskCacheWithKeys
+            elif unhash:
+                # can iterate over keys by unhashing
+                constr = diskcache.DiskCacheWithUnhash
             else:
                 # cannot iterate over keys
                 constr = diskcache.DiskCache
