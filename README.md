@@ -1,4 +1,7 @@
 # pymemo
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+
 Persistent memoisation framework for Python
 
 Allows functions to store their outputs permanently to disk (and in the future,
@@ -43,4 +46,7 @@ will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
 Many more options are available.  See the documentation in `persist.py` for a
-full description.
+full description, or [launch the included notebook on
+Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+for more examples.
+
