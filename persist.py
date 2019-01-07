@@ -2,6 +2,7 @@ import hashing
 import pickling
 import preprocessing
 import diskcache
+import mongodbcache
 from functools import update_wrapper
 
 
@@ -13,7 +14,8 @@ def persist(func=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             hash=hashing.hash,
-            unhash=None):
+            unhash=None,
+            backend=diskcache):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -131,6 +133,11 @@ def persist(func=None,
                 # cannot iterate over keys
                 constr = diskcache.DiskCache
             self.cache = constr(self, basedir, funcdir, storekey)
+
+            # TODO: put this in properly
+            if backend == "mongodb":
+                constr = mongodbcache.MongoDBCache
+                self.cache = constr(self, storekey=storekey)
 
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)
