@@ -3,14 +3,14 @@ namespace_t = ["gapmemo", "pymemo"]
 memo_schema = {
     # Schema definition, based on Cerberus grammar. Check the Cerberus project
     # (https://github.com/pyeve/cerberus) for details.
-    'func_name': {
+    'funcname': {
         'type': 'string',
         'minlength': 1,
         'required': True
     },
     'hash': {
         'type': 'string',
-        'required': True,
+        'required': True
     },
     'namespace': {
         'type': "string",
@@ -19,18 +19,28 @@ memo_schema = {
     'result': {
         'type': 'string',
         'required': True
+    },
+    'metadata': {
+        'type': 'dict',
+        'required': False
+    },
+    'comments': {
+        'type': 'string',
+        'required': False
     }
 }
 
 memos = {
+    'url': 'memos/<regex("[\w]+"):funcname>',
+
     # by default the standard item entry point is defined as
     # '/people/<ObjectId>'. We leave it untouched, and we also enable an
     # additional read-only entry point. This way consumers can also perform
     # GET requests at '/people/<lastname>'.
-    #'additional_lookup': {
-    #    'url': 'regex("[\w]+")',
-    #    'field': 'func_name'
-    #},
+    'additional_lookup': {
+        'url': 'regex("[-\w]+")',
+        'field': 'hash',
+    },
 
     # We choose to override global cache-control directives for this resource.
     #'cache_control': 'max-age=10,must-revalidate',
