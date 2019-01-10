@@ -47,7 +47,7 @@ class MongoDBCache:
         else:
             self._funcname = funcname
         self._storekey = storekey
-        self._url = 'http://localhost:5000/memos'
+        self._url = 'http://localhost:5000/memos/' + self._funcname
         self._headers = {'Content-type': 'application/json',
                          'Accept': 'text/plain'}
 
@@ -60,19 +60,12 @@ class MongoDBCache:
                 raise HashCollisionError(storedkey, key)
 
         # Search for hash in database
-        r = requests.get(url=self._url)
-        if r.status_code != 200:
-            raise MongoDBError(r.status_code, r.reason)
-        db_items = json.loads(r.text).get('_items')
-        db_items = [item for item in db_items
-                    if item.get('func_name') == self._funcname
-                    and item.get('hash') == h]  # TODO: use DB properly
-        if len(db_items) > 0:
-            db_item = db_items[0]
-        else:
-            db_item = None
-
-        if db_item is not None:
+        url = self._url + "/" + h + "/"
+        r = requests.get(url=url)
+        if r.status_code == 200:
+            # Stored value found
+            print(r.text)
+            db_item = json.loads(r.text)
             if self._storekey:
                 # Check key
                 keystring = db_item.get('key')
@@ -81,17 +74,21 @@ class MongoDBCache:
                     raise HashCollisionError(storedkey, key)
             # Use stored value
             val = self._func._unpickle(db_item.get('result'))
-        else:
+        elif r.status_code == 404:
             # No value stored
             raise KeyError(key)
+        else:
+            # Database error
+            raise MongoDBError(r.status_code, r.reason)
+
         return val
 
     def __setitem__(self, key, val):
         h = self._func._hash(key)
-        new_item = {"func_name": self._funcname,
-                    "hash": h,
-                    "namespace": "pymemo",
-                    "result": self._func._pickle(val)}
+        new_item = {'funcname': self._funcname,
+                    'hash': h,
+                    'namespace': 'pymemo',
+                    'result': self._func._pickle(val)}
         if self._storekey:
             new_item['key'] = self._func._pickle(key)
         r = requests.post(url=self._url,
@@ -101,19 +98,36 @@ class MongoDBCache:
             raise MongoDBError(r.status_code, r.reason)
 
     def __delitem__(self, key):
+        # Get the item from the database
         h = self._func._hash(key)
-        # TODO: delete the item or raise a KeyError
+        url = self._url + "/" + h
+        r = requests.get(url=url)
+        if r.status_code == 200:
+            db_item = json.loads(r.text)
+        elif r.status_code == 404:
+            raise KeyError(key)
+        else:
+            raise MongoDBError(r.status_code, r.reason)
+
+        # Delete the item using its _id and _etag
+        url = self._url + '/' + db_item.get('_id')
+        headers = dict(self._headers)
+        headers['If-Match'] = db_item.get('_etag')
+        r = requests.delete(url=url, headers=headers)
+        if r.status_code != 204:
+            raise MongoDBError(r.status_code, r.reason)
 
     def __len__(self):
-        # TODO: use database properly
         r = requests.get(url=self._url)
-        if r.status_code != 200:
+        if r.status_code == 200:
+            return json.loads(r.text).get('_meta').get('total')
+        elif r.status_code == 404:
+            return 0
+        else:
             raise MongoDBError(r.status_code, r.reason)
-        return json.loads(r.text).get('_meta').get('total')
 
     def clear(self):
         """Delete all the results stored in this cache."""
-        # TODO: safety checks?
         r = requests.delete(url=self._url)
         if r.status_code != 204:
             raise MongoDBError(r.status_code, r.reason)
