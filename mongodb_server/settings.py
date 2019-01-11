@@ -1,8 +1,7 @@
 namespace_t = ["gapmemo", "pymemo"]
 
 memo_schema = {
-    # Schema definition, based on Cerberus grammar. Check the Cerberus project
-    # (https://github.com/pyeve/cerberus) for details.
+    # Required fields
     'funcname': {
         'type': 'string',
         'minlength': 1,
@@ -19,6 +18,12 @@ memo_schema = {
     'result': {
         'type': 'string',
         'required': True
+    },
+
+    # Optional fields
+    'key': {
+        'type': 'string',
+        'required': False
     },
     'metadata': {
         'type': 'dict',
@@ -38,7 +43,7 @@ memos = {
     # additional read-only entry point. This way consumers can also perform
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
-        'url': 'regex("[-\w]+")',
+        'url': 'regex("[-\w ]+")',
         'field': 'hash',
     },
 
@@ -47,7 +52,7 @@ memos = {
     #'cache_expires': 10,
 
     # most global settings can be overridden at resource level
-    #'resource_methods': ['GET', 'POST'],
+    'resource_methods': ['GET', 'POST', 'DELETE'],
 
     'schema': memo_schema
 }

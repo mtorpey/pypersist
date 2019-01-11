@@ -60,11 +60,10 @@ class MongoDBCache:
                 raise HashCollisionError(storedkey, key)
 
         # Search for hash in database
-        url = self._url + "/" + h + "/"
+        url = self._url + '/' + h
         r = requests.get(url=url)
         if r.status_code == 200:
             # Stored value found
-            print(r.text)
             db_item = json.loads(r.text)
             if self._storekey:
                 # Check key
@@ -100,7 +99,7 @@ class MongoDBCache:
     def __delitem__(self, key):
         # Get the item from the database
         h = self._func._hash(key)
-        url = self._url + "/" + h
+        url = self._url + '/' + h
         r = requests.get(url=url)
         if r.status_code == 200:
             db_item = json.loads(r.text)
@@ -129,7 +128,7 @@ class MongoDBCache:
     def clear(self):
         """Delete all the results stored in this cache."""
         r = requests.delete(url=self._url)
-        if r.status_code != 204:
+        if r.status_code not in [204, 404]:
             raise MongoDBError(r.status_code, r.reason)
 
 
