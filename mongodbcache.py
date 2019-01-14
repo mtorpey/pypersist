@@ -1,5 +1,3 @@
-from os import makedirs, remove, listdir
-from os.path import exists, join
 from collections.abc import MutableMapping, Iterator
 import requests, json
 
@@ -133,12 +131,12 @@ class MongoDBCache:
 
 
 class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
-    """Mutable mapping for saving function outputs to disk
+    """Mutable mapping for saving function outputs to a MongoDB database
 
-    This subclass of `MongoDBCache` can be used in place of `MongoDBCache` whenever
-    `storekeys` is True, to implement the `MutableMapping` abstract base class.
-    This allows the cache to be used exactly like a dictionary, including the
-    ability to iterate through all keys in the cache.
+    This subclass of `MongoDBCache` can be used in place of `MongoDBCache`
+    whenever `storekey` is True, to implement the `MutableMapping` abstract base
+    class.  This allows the cache to be used exactly like a dictionary,
+    including the ability to iterate through all keys in the cache.
 
     """
 
@@ -165,12 +163,13 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
 
 
 class MongoDBCacheWithUnhash(MongoDBCache, MutableMapping):
-    """Mutable mapping for saving function outputs to disk
+    """Mutable mapping for saving function outputs to a MongoDB database
 
-    This subclass of `MongoDBCache` can be used in place of `MongoDBCache` whenever
-    `unhash` is set, to implement the `MutableMapping` abstract base class.
-    This allows the cache to be used exactly like a dictionary, including the
-    ability to iterate through all keys in the cache by unhashing filenames.
+    This subclass of `MongoDBCache` can be used in place of `MongoDBCache`
+    whenever `unhash` is set, to implement the `MutableMapping` abstract base
+    class.  This allows the cache to be used exactly like a dictionary,
+    including the ability to iterate through all keys in the cache by unhashing
+    filenames.
 
     """
 
