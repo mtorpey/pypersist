@@ -112,7 +112,7 @@ class DiskCacheWithKeys(DiskCache, MutableMapping):
     """Mutable mapping for saving function outputs to disk
 
     This subclass of `DiskCache` can be used in place of `DiskCache` whenever
-    `storekeys` is True, to implement the `MutableMapping` abstract base class.
+    `storekey` is True, to implement the `MutableMapping` abstract base class.
     This allows the cache to be used exactly like a dictionary, including the
     ability to iterate through all keys in the cache.
 
