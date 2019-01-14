@@ -136,7 +136,10 @@ def persist(func=None,
 
             # TODO: put this in properly
             if backend == "mongodb":
-                constr = mongodbcache.MongoDBCache
+                if storekey:
+                    constr = mongodbcache.MongoDBCacheWithKeys
+                else:
+                    constr = mongodbcache.MongoDBCache
                 self.cache = constr(self, storekey=storekey)
 
         def __call__(self, *args, **kwargs):

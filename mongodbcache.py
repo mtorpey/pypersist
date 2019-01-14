@@ -147,18 +147,21 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
         """Iterator class for the keys of a `MongoDBCacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
-            self._files = listdir(self._cache._dir)
+            r = requests.get(url=cache._url)
+            if r.status_code == 200:
+                self._items = json.loads(r.text).get('_items')
+            elif r.status_code == 404:
+                self._items = []
+            else:
+                raise MongoDBError(r.status_code, r.reason)
             self._pos = 0
 
         def __next__(self):
-            if self._pos >= len(self._files):
+            if self._pos >= len(self._items):
                 raise StopIteration
-            fname = join(self._cache._dir, self._files[self._pos])
+            item = self._items[self._pos]
             self._pos += 1
-            file = open(fname, 'r')
-            string = file.readline().rstrip('\n')
-            key = self._cache._func._unpickle(string)
-            file.close()
+            key = self._cache._func._unpickle(item.get('key'))
             return key
 
 
