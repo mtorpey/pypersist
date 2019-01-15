@@ -204,16 +204,21 @@ class MongoDBCacheWithUnhash(MongoDBCache, MutableMapping):
         """Iterator class for the keys of a `MongoDBCacheWithUnhash` object"""
         def __init__(self, cache):
             self._cache = cache
-            self._files = listdir(self._cache._dir)
+            db_items = self._cache._get_db()
+            if db_items:
+                self._items = db_items.get('_items')
+                # TODO: replace .get() with []
+            else:
+                self._items = []
             self._pos = 0
 
         def __next__(self):
-            if self._pos >= len(self._files):
+            if self._pos >= len(self._items):
                 raise StopIteration
-            fname = self._files[self._pos]
-            h = fname[:-len('.out')]  # cut off '.out'
+            item = self._items[self._pos]
             self._pos += 1
-            return self._cache._func._unhash(h)
+            key = self._cache._func._unhash(item.get('hash'))
+            return key
 
 
 class HashCollisionError(Exception):

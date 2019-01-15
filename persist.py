@@ -138,6 +138,8 @@ def persist(func=None,
             if backend == "mongodb":
                 if storekey:
                     constr = mongodbcache.MongoDBCacheWithKeys
+                elif unhash:
+                    constr = mongodbcache.MongoDBCacheWithUnhash
                 else:
                     constr = mongodbcache.MongoDBCache
                 self.cache = constr(self, storekey=storekey)
