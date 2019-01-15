@@ -57,12 +57,10 @@ class MongoDBCache:
             if storedkey != key:
                 raise HashCollisionError(storedkey, key)
 
-        # Search for hash in database
-        url = self._url + '/' + h
-        r = requests.get(url=url)
-        if r.status_code == 200:
+        # Search for value in database
+        db_item = self._get_db(h)
+        if db_item:
             # Stored value found
-            db_item = json.loads(r.text)
             if self._storekey:
                 # Check key
                 keystring = db_item.get('key')
@@ -71,12 +69,9 @@ class MongoDBCache:
                     raise HashCollisionError(storedkey, key)
             # Use stored value
             val = self._func._unpickle(db_item.get('result'))
-        elif r.status_code == 404:
+        else:
             # No value stored
             raise KeyError(key)
-        else:
-            # Database error
-            raise MongoDBError(r.status_code, r.reason)
 
         return val
 
@@ -97,14 +92,9 @@ class MongoDBCache:
     def __delitem__(self, key):
         # Get the item from the database
         h = self._func._hash(key)
-        url = self._url + '/' + h
-        r = requests.get(url=url)
-        if r.status_code == 200:
-            db_item = json.loads(r.text)
-        elif r.status_code == 404:
+        db_item = self._get_db(h)
+        if db_item is None:
             raise KeyError(key)
-        else:
-            raise MongoDBError(r.status_code, r.reason)
 
         # Delete the item using its _id and _etag
         url = self._url + '/' + db_item.get('_id')
@@ -115,18 +105,51 @@ class MongoDBCache:
             raise MongoDBError(r.status_code, r.reason)
 
     def __len__(self):
-        r = requests.get(url=self._url)
-        if r.status_code == 200:
-            return json.loads(r.text).get('_meta').get('total')
-        elif r.status_code == 404:
-            return 0
+        db_items = self._get_db()
+        if db_items:
+            return db_items.get('_meta').get('total')
         else:
-            raise MongoDBError(r.status_code, r.reason)
+            return 0
 
     def clear(self):
         """Delete all the results stored in this cache."""
         r = requests.delete(url=self._url)
         if r.status_code not in [204, 404]:
+            raise MongoDBError(r.status_code, r.reason)
+
+    def _get_db(self, hash=None):
+        """Return all db items for this function, or one with this hash
+
+        Queries the MongoDB database for entries with this function, and returns
+        the resulting json data as a dictionary.  If a hash is specified, this
+        will correspond to a single database item with entries '_id', '_etag',
+        'funcname', 'hash', 'result' and so on.  If no hash is specified, it
+        will contain a list of all such items in the database in the '_items'
+        entry, along with metadata in the '_meta' entry.
+
+        If no appropriate item exists in the database, None is returned instead
+
+        Parameters
+        ----------
+        hash : str, optional
+
+        Returns
+        -------
+        dict or None
+
+        """
+        url = self._url
+        if hash:
+            url += '/' + hash
+        r = requests.get(url=url)
+        if r.status_code == 200:
+            # Stored values found
+            return json.loads(r.text)
+        elif r.status_code == 404:
+            # No value stored
+            return None
+        else:
+            # Database error
             raise MongoDBError(r.status_code, r.reason)
 
 
@@ -147,13 +170,11 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
         """Iterator class for the keys of a `MongoDBCacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
-            r = requests.get(url=cache._url)
-            if r.status_code == 200:
-                self._items = json.loads(r.text).get('_items')
-            elif r.status_code == 404:
-                self._items = []
+            db_items = self._cache._get_db()
+            if db_items:
+                self._items = db_items.get('_items')
             else:
-                raise MongoDBError(r.status_code, r.reason)
+                self._items = []
             self._pos = 0
 
         def __next__(self):
