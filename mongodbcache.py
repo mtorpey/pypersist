@@ -63,12 +63,12 @@ class MongoDBCache:
             # Stored value found
             if self._storekey:
                 # Check key
-                keystring = db_item.get('key')
+                keystring = db_item['key']
                 storedkey = self._func._unpickle(keystring)
                 if storedkey != key:
                     raise HashCollisionError(storedkey, key)
             # Use stored value
-            val = self._func._unpickle(db_item.get('result'))
+            val = self._func._unpickle(db_item['result'])
         else:
             # No value stored
             raise KeyError(key)
@@ -97,9 +97,9 @@ class MongoDBCache:
             raise KeyError(key)
 
         # Delete the item using its _id and _etag
-        url = self._url + '/' + db_item.get('_id')
+        url = self._url + '/' + db_item['_id']
         headers = dict(self._headers)
-        headers['If-Match'] = db_item.get('_etag')
+        headers['If-Match'] = db_item['_etag']
         r = requests.delete(url=url, headers=headers)
         if r.status_code != 204:
             raise MongoDBError(r.status_code, r.reason)
@@ -107,7 +107,7 @@ class MongoDBCache:
     def __len__(self):
         db_items = self._get_db()
         if db_items:
-            return db_items.get('_meta').get('total')
+            return db_items['_meta']['total']
         else:
             return 0
 
@@ -172,7 +172,7 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
             self._cache = cache
             db_items = self._cache._get_db()
             if db_items:
-                self._items = db_items.get('_items')
+                self._items = db_items['_items']
             else:
                 self._items = []
             self._pos = 0
@@ -182,7 +182,7 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
                 raise StopIteration
             item = self._items[self._pos]
             self._pos += 1
-            key = self._cache._func._unpickle(item.get('key'))
+            key = self._cache._func._unpickle(item['key'])
             return key
 
 
@@ -206,8 +206,7 @@ class MongoDBCacheWithUnhash(MongoDBCache, MutableMapping):
             self._cache = cache
             db_items = self._cache._get_db()
             if db_items:
-                self._items = db_items.get('_items')
-                # TODO: replace .get() with []
+                self._items = db_items['_items']
             else:
                 self._items = []
             self._pos = 0
@@ -217,7 +216,7 @@ class MongoDBCacheWithUnhash(MongoDBCache, MutableMapping):
                 raise StopIteration
             item = self._items[self._pos]
             self._pos += 1
-            key = self._cache._func._unhash(item.get('hash'))
+            key = self._cache._func._unhash(item['hash'])
             return key
 
 
