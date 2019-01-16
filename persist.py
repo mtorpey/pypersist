@@ -119,6 +119,7 @@ def persist(func=None,
             self._unhash = unhash
             self._pickle = pickle
             self._unpickle = unpickle
+            self._storekey = storekey
             if key is None:
                 self._key = self.default_key
             else:
@@ -132,7 +133,7 @@ def persist(func=None,
             else:
                 # cannot iterate over keys
                 constr = diskcache.DiskCache
-            self.cache = constr(self, basedir, funcdir, storekey)
+            self.cache = constr(self, basedir, funcdir)
 
             # TODO: put this in properly
             if backend == "mongodb":
@@ -142,7 +143,7 @@ def persist(func=None,
                     constr = mongodbcache.MongoDBCacheWithUnhash
                 else:
                     constr = mongodbcache.MongoDBCache
-                self.cache = constr(self, storekey=storekey)
+                self.cache = constr(self)
 
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)

@@ -30,16 +30,10 @@ class DiskCache:
         Directory inside `basedir` into which the results for this specific
         function should be stored.  Should be unique to avoid returning results
         for the wrong function.  Default is the name of the function `func`.
-    storekey : bool, optional
-        Whether to store the key along with the output when a result is stored.
-        If True, the key will be checked when loading a value, to check for
-        hash collisions.  If False, two keys will produce the same output
-        whenever their `hash` values are the same.  If True is used, consider
-        using the subclass `DiskCacheWithKeys`.  Default is False.
 
     """
 
-    def __init__(self, func, basedir, funcdir=None, storekey=False):
+    def __init__(self, func, basedir, funcdir=None):
         self._func = func
         self._basedir = basedir
         if funcdir is None:
@@ -49,7 +43,6 @@ class DiskCache:
         self._dir = join(self._basedir, self._funcdir)
         if not exists(self._dir):
             makedirs(self._dir)
-        self._storekey = storekey
 
     def __getitem__(self, key):
         fname = self._key_to_fname(key)
@@ -59,7 +52,7 @@ class DiskCache:
                 raise HashCollisionError(storedkey, key)
         if exists(fname):
             file = open(fname, 'r')
-            if self._storekey:
+            if self._func._storekey:
                 keystring = file.readline().rstrip('\n')
                 storedkey = self._func._unpickle(keystring)
                 if storedkey != key:
@@ -73,7 +66,7 @@ class DiskCache:
     def __setitem__(self, key, val):
         fname = self._key_to_fname(key)
         file = open(fname, 'w')
-        if self._storekey:
+        if self._func._storekey:
             file.write(self._func._pickle(key))
             file.write('\n')
         file.write(self._func._pickle(val))

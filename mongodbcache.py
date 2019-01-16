@@ -38,13 +38,12 @@ class MongoDBCache:
 
     """
 
-    def __init__(self, func, funcname=None, storekey=False):
+    def __init__(self, func, funcname=None):
         self._func = func
         if funcname is None:
             self._funcname = func.__name__
         else:
             self._funcname = funcname
-        self._storekey = storekey
         self._url = 'http://localhost:5000/memos/' + self._funcname
         self._headers = {'Content-type': 'application/json',
                          'Accept': 'text/plain'}
@@ -61,7 +60,7 @@ class MongoDBCache:
         db_item = self._get_db(h)
         if db_item:
             # Stored value found
-            if self._storekey:
+            if self._func._storekey:
                 # Check key
                 keystring = db_item['key']
                 storedkey = self._func._unpickle(keystring)
@@ -81,7 +80,7 @@ class MongoDBCache:
                     'hash': h,
                     'namespace': 'pymemo',
                     'result': self._func._pickle(val)}
-        if self._storekey:
+        if self._func._storekey:
             new_item['key'] = self._func._pickle(key)
         r = requests.post(url=self._url,
                           headers=self._headers,
