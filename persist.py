@@ -124,23 +124,16 @@ def persist(func=None,
                 self._key = self.default_key
             else:
                 self._key = key
-            if storekey:
-                # can iterate over stored keys
+            if storekey or unhash:
                 constr = diskcache.DiskCacheWithKeys
-            elif unhash:
-                # can iterate over keys by unhashing
-                constr = diskcache.DiskCacheWithUnhash
             else:
-                # cannot iterate over keys
                 constr = diskcache.DiskCache
             self.cache = constr(self, basedir, funcdir)
 
             # TODO: put this in properly
             if backend == "mongodb":
-                if storekey:
+                if storekey or unhash:
                     constr = mongodbcache.MongoDBCacheWithKeys
-                elif unhash:
-                    constr = mongodbcache.MongoDBCacheWithUnhash
                 else:
                     constr = mongodbcache.MongoDBCache
                 self.cache = constr(self)

@@ -105,9 +105,9 @@ class DiskCacheWithKeys(DiskCache, MutableMapping):
     """Mutable mapping for saving function outputs to disk
 
     This subclass of `DiskCache` can be used in place of `DiskCache` whenever
-    `storekey` is True, to implement the `MutableMapping` abstract base class.
-    This allows the cache to be used exactly like a dictionary, including the
-    ability to iterate through all keys in the cache.
+    `storekey` is True or `unhash` is set, to implement the `MutableMapping`
+    abstract base class.  This allows the cache to be used exactly like a
+    dictionary, including the ability to iterate through all keys in the cache.
 
     """
 
@@ -124,42 +124,21 @@ class DiskCacheWithKeys(DiskCache, MutableMapping):
         def __next__(self):
             if self._pos >= len(self._files):
                 raise StopIteration
-            fname = join(self._cache._dir, self._files[self._pos])
-            self._pos += 1
-            file = open(fname, 'r')
-            string = file.readline().rstrip('\n')
-            key = self._cache._func._unpickle(string)
-            file.close()
-            return key
-
-
-class DiskCacheWithUnhash(DiskCache, MutableMapping):
-    """Mutable mapping for saving function outputs to disk
-
-    This subclass of `DiskCache` can be used in place of `DiskCache` whenever
-    `unhash` is set, to implement the `MutableMapping` abstract base class.
-    This allows the cache to be used exactly like a dictionary, including the
-    ability to iterate through all keys in the cache by unhashing filenames.
-
-    """
-
-    def __iter__(self):
-        return self.KeysIter(self)
-
-    class KeysIter(Iterator):
-        """Iterator class for the keys of a `DiskCacheWithUnhash` object"""
-        def __init__(self, cache):
-            self._cache = cache
-            self._files = listdir(self._cache._dir)
-            self._pos = 0
-
-        def __next__(self):
-            if self._pos >= len(self._files):
-                raise StopIteration
             fname = self._files[self._pos]
-            h = fname[:-len('.out')]  # cut off '.out'
+            if self._cache._func._unhash:
+                # Unhash from filename
+                h = fname[:-len('.out')]
+                key = self._cache._func._unhash(h)
+            else:
+                assert(self._cache._func._storekey)
+                # Read key from file
+                path = join(self._cache._dir, fname)
+                file = open(path, 'r')
+                string = file.readline().rstrip('\n')
+                key = self._cache._func._unpickle(string)
+                file.close()
             self._pos += 1
-            return self._cache._func._unhash(h)
+            return key
 
 
 class HashCollisionError(Exception):

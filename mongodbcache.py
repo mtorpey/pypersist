@@ -156,9 +156,10 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
     """Mutable mapping for saving function outputs to a MongoDB database
 
     This subclass of `MongoDBCache` can be used in place of `MongoDBCache`
-    whenever `storekey` is True, to implement the `MutableMapping` abstract base
-    class.  This allows the cache to be used exactly like a dictionary,
-    including the ability to iterate through all keys in the cache.
+    whenever `storekey` is True or `unhash` is defined, to implement the
+    `MutableMapping` abstract base class.  This allows the cache to be used
+    exactly like a dictionary, including the ability to iterate through all keys
+    in the cache.
 
     """
 
@@ -169,6 +170,7 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
         """Iterator class for the keys of a `MongoDBCacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
+            assert(cache._func._storekey or cache._func._unhash)
             db_items = self._cache._get_db()
             if db_items:
                 self._items = db_items['_items']
@@ -181,41 +183,11 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
                 raise StopIteration
             item = self._items[self._pos]
             self._pos += 1
-            key = self._cache._func._unpickle(item['key'])
-            return key
-
-
-class MongoDBCacheWithUnhash(MongoDBCache, MutableMapping):
-    """Mutable mapping for saving function outputs to a MongoDB database
-
-    This subclass of `MongoDBCache` can be used in place of `MongoDBCache`
-    whenever `unhash` is set, to implement the `MutableMapping` abstract base
-    class.  This allows the cache to be used exactly like a dictionary,
-    including the ability to iterate through all keys in the cache by unhashing
-    filenames.
-
-    """
-
-    def __iter__(self):
-        return self.KeysIter(self)
-
-    class KeysIter(Iterator):
-        """Iterator class for the keys of a `MongoDBCacheWithUnhash` object"""
-        def __init__(self, cache):
-            self._cache = cache
-            db_items = self._cache._get_db()
-            if db_items:
-                self._items = db_items['_items']
+            if self._cache._func._storekey:
+                key = self._cache._func._unpickle(item['key'])
             else:
-                self._items = []
-            self._pos = 0
-
-        def __next__(self):
-            if self._pos >= len(self._items):
-                raise StopIteration
-            item = self._items[self._pos]
-            self._pos += 1
-            key = self._cache._func._unhash(item['hash'])
+                assert(self._cache._func._unhash)
+                key = self._cache._func._unhash(item['hash'])
             return key
 
 
