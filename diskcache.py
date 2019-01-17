@@ -14,7 +14,8 @@ class Cache:
     `len(cache)`.
 
     A disk Cache might not store its keys, and therefore we cannot iterate
-    through its keys as we can with a dictionary.  However, see `CacheWithKeys`.
+    through its keys as we can with a dictionary.  However, see
+    `CacheWithKeys`.
 
     Parameters
     ----------
@@ -98,10 +99,10 @@ class Cache:
 class CacheWithKeys(Cache, MutableMapping):
     """Mutable mapping for saving function outputs to disk
 
-    This subclass of `Cache` can be used in place of `Cache` whenever `storekey`
-    is True or `unhash` is set, to implement the `MutableMapping` abstract base
-    class.  This allows the cache to be used exactly like a dictionary,
-    including the ability to iterate through all keys in the cache.
+    This subclass of `Cache` can be used in place of `Cache` whenever
+    `storekey` is True or `unhash` is set, to implement the `MutableMapping`
+    abstract base class.  This allows the cache to be used exactly like a
+    dictionary, including the ability to iterate through all keys in the cache.
 
     """
 

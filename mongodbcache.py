@@ -1,5 +1,6 @@
 from collections.abc import MutableMapping, Iterator
-import requests, json
+import requests
+import json
 
 
 class Cache:
@@ -115,12 +116,12 @@ class Cache:
     def _get_db(self, hash=None):
         """Return all db items for this function, or one with this hash
 
-        Queries the MongoDB database for entries with this function, and returns
-        the resulting json data as a dictionary.  If a hash is specified, this
-        will correspond to a single database item with entries '_id', '_etag',
-        'funcname', 'hash', 'result' and so on.  If no hash is specified, it
-        will contain a list of all such items in the database in the '_items'
-        entry, along with metadata in the '_meta' entry.
+        Queries the MongoDB database for entries with this function, and
+        returns the resulting json data as a dictionary.  If a hash is
+        specified, this will correspond to a single database item with entries
+        '_id', '_etag', 'funcname', 'hash', 'result' and so on.  If no hash is
+        specified, it will contain a list of all such items in the database in
+        the '_items' entry, along with metadata in the '_meta' entry.
 
         If no appropriate item exists in the database, None is returned instead
 
@@ -151,11 +152,11 @@ class Cache:
 class CacheWithKeys(Cache, MutableMapping):
     """Mutable mapping for saving function outputs to a MongoDB database
 
-    This subclass of `Cache` can be used in place of `Cache`
-    whenever `storekey` is True or `unhash` is defined, to implement the
+    This subclass of `Cache` can be used in place of `Cache` whenever
+    `storekey` is True or `unhash` is defined, to implement the
     `MutableMapping` abstract base class.  This allows the cache to be used
-    exactly like a dictionary, including the ability to iterate through all keys
-    in the cache.
+    exactly like a dictionary, including the ability to iterate through all
+    keys in the cache.
 
     """
 
@@ -164,6 +165,7 @@ class CacheWithKeys(Cache, MutableMapping):
 
     class KeysIter(Iterator):
         """Iterator class for the keys of a `CacheWithKeys` object"""
+
         def __init__(self, cache):
             self._cache = cache
             assert(cache._func._storekey or cache._func._unhash)
@@ -189,6 +191,7 @@ class CacheWithKeys(Cache, MutableMapping):
 
 class HashCollisionError(Exception):
     """Exception for when two different keys hash to the same value"""
+
 
 class MongoDBError(Exception):
     """Exception for a problem interacting with a MongoDB database"""

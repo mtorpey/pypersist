@@ -149,7 +149,6 @@ def persist(func=None,
 
             self.cache = constr(self, path)
 
-
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)
             try:
