@@ -2,7 +2,7 @@ from collections.abc import MutableMapping, Iterator
 import requests, json
 
 
-class MongoDBCache:
+class Cache:
     """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
@@ -12,9 +12,9 @@ class MongoDBCache:
     using `del cache[key]`.  The number of values stored can be found using
     `len(cache)`.
 
-    A MongoDBCache might not store its keys, and therefore we cannot iterate
+    A MongoDB Cache might not store its keys, and therefore we cannot iterate
     through its keys as we can with a dictionary.  However, see
-    `MongoDBCacheWithKeys`.
+    `CacheWithKeys`.
 
     Parameters
     ----------
@@ -34,17 +34,13 @@ class MongoDBCache:
         If True, the key will be checked when loading a value, to check for
         hash collisions.  If False, two keys will produce the same output
         whenever their `hash` values are the same.  If True is used, consider
-        using the subclass `MongoDBCacheWithKeys`.  Default is False.
+        using the subclass `CacheWithKeys`.  Default is False.
 
     """
 
     def __init__(self, func, funcname=None):
         self._func = func
-        if funcname is None:
-            self._funcname = func.__name__
-        else:
-            self._funcname = funcname
-        self._url = 'http://localhost:5000/memos/' + self._funcname
+        self._url = 'http://localhost:5000/memos/' + self._func._funcname
         self._headers = {'Content-type': 'application/json',
                          'Accept': 'text/plain'}
 
@@ -76,7 +72,7 @@ class MongoDBCache:
 
     def __setitem__(self, key, val):
         h = self._func._hash(key)
-        new_item = {'funcname': self._funcname,
+        new_item = {'funcname': self._func._funcname,
                     'hash': h,
                     'namespace': 'pymemo',
                     'result': self._func._pickle(val)}
@@ -152,10 +148,10 @@ class MongoDBCache:
             raise MongoDBError(r.status_code, r.reason)
 
 
-class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
+class CacheWithKeys(Cache, MutableMapping):
     """Mutable mapping for saving function outputs to a MongoDB database
 
-    This subclass of `MongoDBCache` can be used in place of `MongoDBCache`
+    This subclass of `Cache` can be used in place of `Cache`
     whenever `storekey` is True or `unhash` is defined, to implement the
     `MutableMapping` abstract base class.  This allows the cache to be used
     exactly like a dictionary, including the ability to iterate through all keys
@@ -167,7 +163,7 @@ class MongoDBCacheWithKeys(MongoDBCache, MutableMapping):
         return self.KeysIter(self)
 
     class KeysIter(Iterator):
-        """Iterator class for the keys of a `MongoDBCacheWithKeys` object"""
+        """Iterator class for the keys of a `CacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
             assert(cache._func._storekey or cache._func._unhash)

@@ -7,15 +7,14 @@ from functools import update_wrapper
 
 
 def persist(func=None,
-            basedir='persist',
-            funcdir=None,
+            funcname=None,
             key=None,
             storekey=False,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             hash=hashing.hash,
             unhash=None,
-            backend=diskcache):
+            cache='file://persist/'):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -124,19 +123,32 @@ def persist(func=None,
                 self._key = self.default_key
             else:
                 self._key = key
-            if storekey or unhash:
-                constr = diskcache.DiskCacheWithKeys
+            if funcname is None:
+                self._funcname = func.__name__
             else:
-                constr = diskcache.DiskCache
-            self.cache = constr(self, basedir, funcdir)
+                self._funcname = funcname
 
-            # TODO: put this in properly
-            if backend == "mongodb":
-                if storekey or unhash:
-                    constr = mongodbcache.MongoDBCacheWithKeys
-                else:
-                    constr = mongodbcache.MongoDBCache
-                self.cache = constr(self)
+            # Determine which backend to use
+            try:
+                pos = cache.index('://')
+                typestring = cache[:pos]
+                path = cache[pos+len('://'):]
+            except ValueError:
+                # No backend specified: use disk
+                typestring = 'file'
+                path = cache
+
+            cachetypes = {'file': diskcache,
+                          'mongodb': mongodbcache}
+            cachetype = cachetypes[typestring]
+
+            if storekey or unhash:
+                constr = cachetype.CacheWithKeys
+            else:
+                constr = cachetype.Cache
+
+            self.cache = constr(self, path)
+
 
         def __call__(self, *args, **kwargs):
             key = self._key(*args, **kwargs)

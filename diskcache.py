@@ -3,7 +3,7 @@ from os.path import exists, join
 from collections.abc import MutableMapping, Iterator
 
 
-class DiskCache:
+class Cache:
     """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
@@ -13,9 +13,8 @@ class DiskCache:
     using `del cache[key]`.  The number of values stored can be found using
     `len(cache)`.
 
-    A DiskCache might not store its keys, and therefore we cannot iterate
-    through its keys as we can with a dictionary.  However, see
-    `DiskCacheWithKeys`.
+    A disk Cache might not store its keys, and therefore we cannot iterate
+    through its keys as we can with a dictionary.  However, see `CacheWithKeys`.
 
     Parameters
     ----------
@@ -33,14 +32,9 @@ class DiskCache:
 
     """
 
-    def __init__(self, func, basedir, funcdir=None):
+    def __init__(self, func, dir):
         self._func = func
-        self._basedir = basedir
-        if funcdir is None:
-            self._funcdir = func.__name__
-        else:
-            self._funcdir = funcdir
-        self._dir = join(self._basedir, self._funcdir)
+        self._dir = join(dir, self._func._funcname)
         if not exists(self._dir):
             makedirs(self._dir)
 
@@ -101,13 +95,13 @@ class DiskCache:
         return self._func._unhash(h)
 
 
-class DiskCacheWithKeys(DiskCache, MutableMapping):
+class CacheWithKeys(Cache, MutableMapping):
     """Mutable mapping for saving function outputs to disk
 
-    This subclass of `DiskCache` can be used in place of `DiskCache` whenever
-    `storekey` is True or `unhash` is set, to implement the `MutableMapping`
-    abstract base class.  This allows the cache to be used exactly like a
-    dictionary, including the ability to iterate through all keys in the cache.
+    This subclass of `Cache` can be used in place of `Cache` whenever `storekey`
+    is True or `unhash` is set, to implement the `MutableMapping` abstract base
+    class.  This allows the cache to be used exactly like a dictionary,
+    including the ability to iterate through all keys in the cache.
 
     """
 
@@ -115,7 +109,7 @@ class DiskCacheWithKeys(DiskCache, MutableMapping):
         return self.KeysIter(self)
 
     class KeysIter(Iterator):
-        """Iterator class for the keys of a `DiskCacheWithKeys` object"""
+        """Iterator class for the keys of a `CacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
             self._files = listdir(self._cache._dir)
