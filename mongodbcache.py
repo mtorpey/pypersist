@@ -1,19 +1,21 @@
+from commoncache import HashCollisionError
+
 from collections.abc import MutableMapping, Iterator
+from os.path import join
 import requests
 import json
-
 
 class Cache:
     """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
-    stores computed values to disk in a specified directory so that they can be
+    stores computed values in a specified MongoDB database so that they can be
     restored later using a key.  Like a dictionary, a key-value pair can be
     added using `cache[key] = val`, looked up using `cache[key]`, and removed
     using `del cache[key]`.  The number of values stored can be found using
     `len(cache)`.
 
-    A MongoDB Cache might not store its keys, and therefore we cannot iterate
+    A MongoDB cache might not store its keys, and therefore we cannot iterate
     through its keys as we can with a dictionary.  However, see
     `CacheWithKeys`.
 
@@ -26,22 +28,16 @@ class Cache:
     basedir : str
         Directory into which to save results.  The same directory can be used
         for several different functions.
-    funcdir : str, optional
-        Directory inside `basedir` into which the results for this specific
-        function should be stored.  Should be unique to avoid returning results
-        for the wrong function.  Default is the name of the function `func`.
-    storekey : bool, optional
-        Whether to store the key along with the output when a result is stored.
-        If True, the key will be checked when loading a value, to check for
-        hash collisions.  If False, two keys will produce the same output
-        whenever their `hash` values are the same.  If True is used, consider
-        using the subclass `CacheWithKeys`.  Default is False.
 
     """
 
-    def __init__(self, func, funcname=None):
+    def __init__(self, func, url):
         self._func = func
-        self._url = 'http://localhost:5000/memos/' + self._func._funcname
+
+        # Use http if not specified
+        if url.find('://') == -1:
+            url = 'http://' + url
+        self._url = join(url, self._func._funcname)
         self._headers = {'Content-type': 'application/json',
                          'Accept': 'text/plain'}
 

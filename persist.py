@@ -7,14 +7,14 @@ from functools import update_wrapper
 
 
 def persist(func=None,
+            cache='file://persist/',
             funcname=None,
             key=None,
             storekey=False,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             hash=hashing.hash,
-            unhash=None,
-            cache='file://persist/'):
+            unhash=None):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -26,12 +26,19 @@ def persist(func=None,
 
     Parameters
     ----------
-    basedir : str, optional
-        The directory in which results should be stored, possibly along with
-        results from other functions.  Default is 'persist'.
-    funcdir : str, optional
-        The directory inside `basedir` in which the results for just this
-        function should be stored.  Default is the name of the function.
+    cache : str, optional
+        The address of the cache in which the outputs of this function should be
+        stored.  If it starts with 'file://', then the remainder of the string
+        should be the path to a location on the local file system in which the
+        results will be stored; this may be a relative path.  If it starts with
+        'mongodb://' then the remainder of the string should be the URL of the
+        pymemo MongoDB server in which the results will be stored.  If it does
+        not contain '://' then 'file://' will be added at the beginning.
+        Default is 'file://persist'.
+    funcname : str, optional
+        A string that uniquely describes this function.  If the same `cache` is
+        used for several memoised functions, they should all have different
+        `funcname` values.  Default is the name of the function.
     key : function(args -> object), optional
         Function that takes the arguments given to the memoised function, and
         returns a key that uniquely identifies those arguments.  Two sets of
@@ -58,18 +65,18 @@ def persist(func=None,
     hash : function(object -> str), optional
         Function that takes a key and produces a string that will be used to
         identify that key.  If this function is not injective, then `storekey`
-        should be set to True to check for hash collisions.  The string should
         only contain characters safe for filenames.  Default uses SHA-1 and
         base 64 encoding, which can store 10^22 objects with a <0.01% chance of
         a collision.
+        can be set to True to check for hash collisions.  The string should
     unhash : function(str -> object), optional
         Function that, if specified, should be the inverse of `hash`.  If this
-        is specified and `storekey` is false, it will be used whenever the keys
-        of `cache` are requested.  Default is None.
+        is specified, it may be used whenever the keys of `cache` are requested.
+        Default is None.
 
     Attributes
     ----------
-    cache : diskcache.DiskCache
+    cache : diskcache.Cache or mongodb.Cache
         Dictionary-like object that allows keys to be looked up and, if
         present, gives the previously computed value.  Values can be added and
         removed using the syntax `func.cache[key] = val` and
@@ -170,7 +177,3 @@ def persist(func=None,
     else:
         # @persist
         return persist_wrapper(func)
-
-
-class PersistError(Exception):
-    """Exception for errors to do with persistent memoisation"""

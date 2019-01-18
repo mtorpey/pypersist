@@ -1,19 +1,21 @@
+from commoncache import HashCollisionError
+
+from collections.abc import MutableMapping, Iterator
 from os import makedirs, remove, listdir
 from os.path import exists, join
-from collections.abc import MutableMapping, Iterator
 
 
 class Cache:
     """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
-    stores computed values to disk in a specified directory so that they can be
+    stores computed values on disk in a specified directory so that they can be
     restored later using a key.  Like a dictionary, a key-value pair can be
     added using `cache[key] = val`, looked up using `cache[key]`, and removed
     using `del cache[key]`.  The number of values stored can be found using
     `len(cache)`.
 
-    A disk Cache might not store its keys, and therefore we cannot iterate
+    A disk cache might not store its keys, and therefore we cannot iterate
     through its keys as we can with a dictionary.  However, see
     `CacheWithKeys`.
 
@@ -23,13 +25,10 @@ class Cache:
         Memoised function whose results this is caching.  Options which are not
         specific to local disk storage, such as the key, hash, and pickle
         functions, are taken from this.
-    basedir : str
+    dir : str
         Directory into which to save results.  The same directory can be used
-        for several different functions.
-    funcdir : str, optional
-        Directory inside `basedir` into which the results for this specific
-        function should be stored.  Should be unique to avoid returning results
-        for the wrong function.  Default is the name of the function `func`.
+        for several different functions, since a subdirectory will be created
+        for each function based on its `funcname`.
 
     """
 
@@ -134,7 +133,3 @@ class CacheWithKeys(Cache, MutableMapping):
                 file.close()
             self._pos += 1
             return key
-
-
-class HashCollisionError(Exception):
-    """Exception for when two different keys hash to the same value"""
