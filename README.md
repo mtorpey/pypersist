@@ -46,7 +46,7 @@ will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
 Many more options are available.  See the documentation in `pymemo.py` for a
-full description, or [launch the included notebook on Binder]
-(https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+full description, or
+[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
 for more examples.
 
