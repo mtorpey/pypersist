@@ -25,9 +25,11 @@ class Cache:
         Memoised function whose results this is caching.  Options which are not
         specific to local disk storage, such as the key, hash, and pickle
         functions, are taken from this.
-    basedir : str
-        Directory into which to save results.  The same directory can be used
-        for several different functions.
+    url : str
+        URL of the pymemo MongoDB database that will be used to store and load
+        results.  The same database can be used for several different
+        functions, since the function's `funcname` will be stored with each
+        result.
 
     """
 
@@ -183,10 +185,6 @@ class CacheWithKeys(Cache, MutableMapping):
                 assert(self._cache._func._unhash)
                 key = self._cache._func._unhash(item['hash'])
             return key
-
-
-class HashCollisionError(Exception):
-    """Exception for when two different keys hash to the same value"""
 
 
 class MongoDBError(Exception):
