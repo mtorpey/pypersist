@@ -4,8 +4,8 @@
 
 Persistent memoisation framework for Python
 
-Allows functions to store their outputs permanently to disk (and in the future,
-to a database), in a configurable way.
+Allows functions to store their outputs permanently to disk or to an online
+database, in a configurable way.
 
 ## Examples
 To use, import the `persist` class from `pymemo.py`:
