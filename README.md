@@ -8,10 +8,10 @@ Allows functions to store their outputs permanently to disk (and in the future,
 to a database), in a configurable way.
 
 ## Examples
-To use, import the `persist` class from `persist.py`:
+To use, import the `persist` class from `pymemo.py`:
 
 ```python
-from persist import persist
+from pymemo import persist
 ```
 
 and use it as a decorator when writing a function:
@@ -19,7 +19,7 @@ and use it as a decorator when writing a function:
 ```python
 @persist
 def double(x):
-    return x*2
+    return x * 2
 
 print(double(3))
 print(double(6.5))
@@ -45,8 +45,8 @@ print(power(10,5))
 will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
-Many more options are available.  See the documentation in `persist.py` for a
-full description, or [launch the included notebook on
-Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+Many more options are available.  See the documentation in `pymemo.py` for a
+full description, or [launch the included notebook on Binder]
+(https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
 for more examples.
 
