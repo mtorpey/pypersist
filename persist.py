@@ -65,10 +65,9 @@ def persist(func=None,
     hash : function(object -> str), optional
         Function that takes a key and produces a string that will be used to
         identify that key.  If this function is not injective, then `storekey`
-        only contain characters safe for filenames.  Default uses SHA-1 and
-        base 64 encoding, which can store 10^22 objects with a <0.01% chance of
-        a collision.
         can be set to True to check for hash collisions.  The string should
+        only contain characters safe for filenames.  Default uses SHA-256 and
+        base 64 encoding, which has an extremely small chance of collision.
     unhash : function(str -> object), optional
         Function that, if specified, should be the inverse of `hash`.  If this
         is specified, it may be used whenever the keys of `cache` are requested.
