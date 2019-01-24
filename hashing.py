@@ -11,6 +11,20 @@ def hash(key):
     The string consists of alphanumeric characters, hyphens and underscores, and
     is precisely 43 characters long.
 
+    Examples
+    --------
+    >>> hash('somestringkey123')
+    'wXS1bv_UbdX4riiyyA3Djjo7JeiEfyGI7o1-hGMnkz0'
+    >>> hash(3.141592654)
+    'nAh_dG9CDZL7bAFWX7E3iUXN2HXZ5eUiYUzdCJXDH-k'
+    >>> hash(None)
+    'Tz_DSKgYlBpGTkFf_2udQWwd3DscZHQ4YdMo-8NFvNY'
+    >>> key = (('arg1', [1,1,2,3,5,8,13]), ('x', 'hello'))
+    >>> hash(key)
+    '1TBQNjqeAKCcCBmy-Sk_T1Xm01juuHOWiKotF5WYeZ8'
+    >>> hash('somestringkey123')
+    'wXS1bv_UbdX4riiyyA3Djjo7JeiEfyGI7o1-hGMnkz0'
+
     """
     b = dumps(key)  # Pickle the key to a bytes object
     b = sha256(b).digest()  # Hash the bytes using sha-1
