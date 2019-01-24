@@ -8,8 +8,8 @@ def hash(key):
     """Return a string which is a hash of the argument given.
 
     It computes the SHA-256 sum of the key and returns it as a base 64 string.
-    The string consists of alphanumeric characters, hyphens and underscores, and
-    is precisely 43 characters long.
+    The string consists of alphanumeric characters, hyphens and underscores,
+    and is precisely 43 characters long.
 
     Examples
     --------

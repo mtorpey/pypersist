@@ -142,6 +142,7 @@ class CacheWithKeys(Cache, MutableMapping):
             self._pos += 1
             return key
 
+
 # Filename extensions
 OUT = '.out'
 KEY = '.key'

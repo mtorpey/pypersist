@@ -5,6 +5,7 @@ from os.path import join
 import requests
 import json
 
+
 class Cache:
     """Dictionary-like object for saving function outputs to disk
 

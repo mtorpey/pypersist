@@ -27,14 +27,14 @@ def persist(func=None,
     Parameters
     ----------
     cache : str, optional
-        The address of the cache in which the outputs of this function should be
-        stored.  If it starts with 'file://', then the remainder of the string
-        should be the path to a location on the local file system in which the
-        results will be stored; this may be a relative path.  If it starts with
-        'mongodb://' then the remainder of the string should be the URL of the
-        pymemo MongoDB server in which the results will be stored.  If it does
-        not contain '://' then 'file://' will be added at the beginning.
-        Default is 'file://persist'.
+        The address of the cache in which the outputs of this function should
+        be stored.  If it starts with 'file://', then the remainder of the
+        string should be the path to a location on the local file system in
+        which the results will be stored; this may be a relative path.  If it
+        starts with 'mongodb://' then the remainder of the string should be the
+        URL of the pymemo MongoDB server in which the results will be stored.
+        If it does not contain '://' then 'file://' will be added at the
+        beginning.  Default is 'file://persist'.
     funcname : str, optional
         A string that uniquely describes this function.  If the same `cache` is
         used for several memoised functions, they should all have different
@@ -70,8 +70,8 @@ def persist(func=None,
         base 64 encoding, which has an extremely small chance of collision.
     unhash : function(str -> object), optional
         Function that, if specified, should be the inverse of `hash`.  If this
-        is specified, it may be used whenever the keys of `cache` are requested.
-        Default is None.
+        is specified, it may be used whenever the keys of `cache` are
+        requested.  Default is None.
 
     Attributes
     ----------
