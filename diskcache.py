@@ -39,18 +39,22 @@ class Cache:
             makedirs(self._dir)
 
     def __getitem__(self, key):
-        fname = self._key_to_fname(key)
+        fname = self._key_to_fname(key, OUT)
         if self._func._unhash:
             storedkey = self._fname_to_key(fname)
             if storedkey != key:
                 raise HashCollisionError(storedkey, key)
         if exists(fname):
-            file = open(fname, 'r')
             if self._func._storekey:
-                keystring = file.readline().rstrip('\n')
+                keyfname = self._key_to_fname(key, KEY)
+                assert(exists(fname))
+                keyfile = open(keyfname, 'r')
+                keystring = keyfile.read()
+                keyfile.close()
                 storedkey = self._func._unpickle(keystring)
                 if storedkey != key:
                     raise HashCollisionError(storedkey, key)
+            file = open(fname, 'r')
             val = self._func._unpickle(file.read())
             file.close()
         else:
@@ -58,24 +62,26 @@ class Cache:
         return val
 
     def __setitem__(self, key, val):
-        fname = self._key_to_fname(key)
-        file = open(fname, 'w')
         if self._func._storekey:
-            file.write(self._func._pickle(key))
-            file.write('\n')
+            keyfname = self._key_to_fname(key, KEY)
+            keyfile = open(keyfname, 'w')
+            keyfile.write(self._func._pickle(key))
+            keyfile.close()
+        fname = self._key_to_fname(key, OUT)
+        file = open(fname, 'w')
         file.write(self._func._pickle(val))
         file.close()
 
     def __delitem__(self, key):
-        fname = self._key_to_fname(key)
+        fname = self._key_to_fname(key, OUT)
         if exists(fname):
             remove(fname)
         else:
             raise KeyError(key)
 
     def __len__(self):
-        # TODO: try to filter non-cache files?
-        return len(listdir(self._dir))
+        # Number of files ending with '.out'
+        return sum(fname.endswith(OUT) for fname in listdir(self._dir))
 
     def clear(self):
         """Delete all the results stored in this cache."""
@@ -84,14 +90,14 @@ class Cache:
             # TODO: safety checks?
             remove(path)
 
-    def _key_to_fname(self, key):
+    def _key_to_fname(self, key, ext):
         h = self._func._hash(key)
-        return '%s/%s.out' % (self._dir, h)
+        return join(self._dir, h + ext)
 
     def _fname_to_key(self, fname):
         if fname.startswith(self._dir):
             fname = fname[len(self._dir + '/'):]  # remove directory
-        h = fname[:-len('.out')]  # remove '.out'
+        h = fname[:fname.rfind('.')]  # remove extension
         return self._func._unhash(h)
 
 
@@ -112,8 +118,10 @@ class CacheWithKeys(Cache, MutableMapping):
         """Iterator class for the keys of a `CacheWithKeys` object"""
         def __init__(self, cache):
             self._cache = cache
-            self._files = listdir(self._cache._dir)
             self._pos = 0
+            self._files = [fname
+                           for fname in listdir(self._cache._dir)
+                           if fname.endswith(OUT)]
 
         def __next__(self):
             if self._pos >= len(self._files):
@@ -121,15 +129,20 @@ class CacheWithKeys(Cache, MutableMapping):
             fname = self._files[self._pos]
             if self._cache._func._unhash:
                 # Unhash from filename
-                h = fname[:-len('.out')]
-                key = self._cache._func._unhash(h)
+                key = self._cache._fname_to_key(fname)
             else:
                 assert(self._cache._func._storekey)
                 # Read key from file
                 path = join(self._cache._dir, fname)
+                path = path[:-len(OUT)] + KEY
                 file = open(path, 'r')
-                string = file.readline().rstrip('\n')
+                string = file.read()
                 key = self._cache._func._unpickle(string)
                 file.close()
             self._pos += 1
             return key
+
+# Filename extensions
+OUT = '.out'
+KEY = '.key'
+META = '.meta'
