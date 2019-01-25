@@ -11,3 +11,6 @@
 persist/
 dirfortriple/
 results_for_alice/
+
+*.pyc
+/dist/
