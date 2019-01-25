@@ -1,8 +1,8 @@
-import hashing
-import pickling
-import preprocessing
-import diskcache
-import mongodbcache
+from . import hashing
+from . import pickling
+from . import preprocessing
+from . import diskcache
+from . import mongodbcache
 from functools import update_wrapper
 
 

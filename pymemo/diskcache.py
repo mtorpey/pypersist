@@ -1,4 +1,4 @@
-from commoncache import HashCollisionError
+from .commoncache import HashCollisionError
 
 from collections.abc import MutableMapping, Iterator
 from os import makedirs, remove, listdir

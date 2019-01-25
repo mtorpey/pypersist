@@ -1,6 +1,6 @@
 # pymemo
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=demo.ipynb)
 
 Persistent memoisation framework for Python
 
@@ -47,6 +47,5 @@ filenames.
 
 Many more options are available.  See the documentation in `pymemo.py` for a
 full description, or
-[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=Persistent%20memoisation.ipynb)
+[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=demo.ipynb)
 for more examples.
-
