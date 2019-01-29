@@ -51,5 +51,5 @@ full description, or
 [launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 for more examples.
 
-See [this HackMD](https://hackmd.io/KSBMXDpZRbCKCKVZH7CJpg) and the Issue
+See [this HackMD](https://hackmd.io/1M5clex-TYWCuxxgi05k5A) and the Issue
 tracker for current plans.
