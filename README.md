@@ -1,5 +1,6 @@
 # pypersist
 
+[![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 
 Persistent memoisation framework for Python
