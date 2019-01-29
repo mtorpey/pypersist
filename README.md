@@ -50,3 +50,6 @@ Many more options are available.  See the documentation in `pypersist.py` for a
 full description, or
 [launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 for more examples.
+
+See [this HackMD](https://hackmd.io/KSBMXDpZRbCKCKVZH7CJpg) and the Issue
+tracker for current plans.
