@@ -1,4 +1,4 @@
-namespace_t = ["gapmemo", "pymemo"]
+namespace_t = ["gapmemo", "pypersist"]
 
 memo_schema = {
     # Required fields
