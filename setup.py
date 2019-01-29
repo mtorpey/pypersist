@@ -3,9 +3,9 @@ from setuptools import setup
 setup(name='pypersist',
       version='0.1',
       description='Persistent memoisation framework for Python',
-      url='https://github.com/mtorpey/pymemo',
+      url='https://github.com/mtorpey/pypersist',
       author='Michael Torpey',
       author_email='mct25@st-andrews.ac.uk',
       license='GPL',
-      packages=['pymemo'],
+      packages=['pypersist'],
       zip_safe=False)

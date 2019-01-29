@@ -32,7 +32,7 @@ def persist(func=None,
         string should be the path to a location on the local file system in
         which the results will be stored; this may be a relative path.  If it
         starts with 'mongodb://' then the remainder of the string should be the
-        URL of the pymemo MongoDB server in which the results will be stored.
+        URL of the pypersist MongoDB server in which the results will be stored.
         If it does not contain '://' then 'file://' will be added at the
         beginning.  Default is 'file://persist'.
     funcname : str, optional

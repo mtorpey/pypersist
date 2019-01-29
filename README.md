@@ -1,6 +1,6 @@
-# pymemo
+# pypersist
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=demo.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 
 Persistent memoisation framework for Python
 
@@ -8,10 +8,10 @@ Allows functions to store their outputs permanently to disk or to an online
 database, in a configurable way.
 
 ## Examples
-To use, import the `persist` class from `pymemo.py`:
+To use, import the `persist` class from the `pypersist` package:
 
 ```python
-from pymemo import persist
+from pypersist import persist
 ```
 
 and use it as a decorator when writing a function:
@@ -45,7 +45,7 @@ print(power(10,5))
 will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
-Many more options are available.  See the documentation in `pymemo.py` for a
+Many more options are available.  See the documentation in `pypersist.py` for a
 full description, or
-[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pymemo/master?filepath=demo.ipynb)
+[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 for more examples.

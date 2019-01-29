@@ -27,7 +27,7 @@ class Cache:
         specific to local disk storage, such as the key, hash, and pickle
         functions, are taken from this.
     url : str
-        URL of the pymemo MongoDB database that will be used to store and load
+        URL of the pypersist MongoDB database that will be used to store and load
         results.  The same database can be used for several different
         functions, since the function's `funcname` will be stored with each
         result.
@@ -74,7 +74,7 @@ class Cache:
         h = self._func._hash(key)
         new_item = {'funcname': self._func._funcname,
                     'hash': h,
-                    'namespace': 'pymemo',
+                    'namespace': 'pypersist',
                     'result': self._func._pickle(val)}
         if self._func._storekey:
             new_item['key'] = self._func._pickle(key)
