@@ -10,7 +10,15 @@ Welcome to pypersist's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+Hello world!
+I write in **bold**, *italics*, and `inline code`.  I also import functions, as
+follows.
 
+.. automodule:: pypersist
+   :members:
+   :show-inheritance:
+
+Or something like that
 
 Indices and tables
 ==================
