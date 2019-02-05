@@ -1,3 +1,15 @@
+"""Persistent memoisation backend that saves results on a MongoDB REST server.
+
+The `persist` decorator takes a `cache` argument, which details what sort of
+backend to use for the cache.  If this string begins with 'mongodb://', then a
+*MongoDB cache* is used, which saves computed results to a MongoDB database via
+a REST API.  This internal work is done by the classes defined below.
+
+To start a MongoDB/REST server for use with this cache, navigate to the
+`mongodb_server/` directory and execute the `run.py` script.
+
+"""
+
 from .commoncache import HashCollisionError
 
 from collections.abc import MutableMapping, Iterator

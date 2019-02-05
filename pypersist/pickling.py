@@ -1,3 +1,5 @@
+"""Default methods used by `persist` for pickling and unpickling objects."""
+
 from pickle import dumps, loads
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 CHAR_ENCODING = 'utf-8'

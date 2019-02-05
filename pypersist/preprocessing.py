@@ -1,3 +1,15 @@
+"""Code to produce a key from a list of arguments to a function.
+
+When a function decorated with `@persist` is called, its `key` function is
+called on the arguments to produce a key that corresponds to those arguments.
+If the user does not specify a custom `key` function, then we fall back to a
+default function that produces a tuple from the arguments; this tuple should be
+in a standard form that ignores functionally irrelevant features such as the
+ordering of keyword arguments.  The `arg_tuple` function in this module produces
+this normalised tuple.
+
+"""
+
 from inspect import getfullargspec
 
 

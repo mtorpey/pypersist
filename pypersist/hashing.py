@@ -1,3 +1,5 @@
+"""Default method used by `persist` for hashing keys."""
+
 from pickle import dumps
 from hashlib import sha256
 from base64 import urlsafe_b64encode

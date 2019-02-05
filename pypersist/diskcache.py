@@ -1,3 +1,13 @@
+"""Persistent memoisation backend that saves results in the local file system.
+
+The `persist` decorator takes a `cache` argument, which details what sort of
+backend to use for the cache.  If this string begins with 'file://', or if no
+`cache` is specified, then a *disk cache* is used, which saves computed results
+to a directory in the local file system.  This internal work is done by the
+classes defined below.
+
+"""
+
 from .commoncache import HashCollisionError
 
 from collections.abc import MutableMapping, Iterator
@@ -6,7 +16,7 @@ from os.path import exists, join
 
 
 class Cache:
-    """Dictionary-like object for saving function outputs to disk
+    """Dictionary-like object for saving function outputs to disk.
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
     stores computed values on disk in a specified directory so that they can be
