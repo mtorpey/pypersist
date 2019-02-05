@@ -1,4 +1,5 @@
-# pypersist
+pypersist
+=========
 
 [![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
@@ -8,7 +9,8 @@ Persistent memoisation framework for Python
 Allows functions to store their outputs permanently to disk or to an online
 database, in a configurable way.
 
-## Examples
+Examples
+--------
 To use, import the `persist` class from the `pypersist` package:
 
 ```python
