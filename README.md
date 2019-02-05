@@ -48,9 +48,9 @@ print(power(10,5))
 will store the outputs of `power` in human-readable files with descriptive
 filenames.
 
-Many more options are available.  See the documentation in `pypersist.py` for a
-full description, or
-[launch the included notebook on Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
+Many more options are available.  See the `persist` class documentation for a
+full description, or [launch the included notebook on
+Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 for more examples.
 
 See [this HackMD](https://hackmd.io/1M5clex-TYWCuxxgi05k5A) and the Issue
