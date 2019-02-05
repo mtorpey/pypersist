@@ -19,7 +19,7 @@ import json
 
 
 class Cache:
-    """Dictionary-like object for saving function outputs to disk
+    """Dictionary-like object for saving function outputs to disk.
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
     stores computed values in a specified MongoDB database so that they can be
@@ -128,21 +128,21 @@ class Cache:
         """Return all db items for this function, or one with this hash
 
         Queries the MongoDB database for entries with this function, and
-        returns the resulting json data as a dictionary.  If a hash is
-        specified, this will correspond to a single database item with entries
-        '_id', '_etag', 'funcname', 'hash', 'result' and so on.  If no hash is
-        specified, it will contain a list of all such items in the database in
-        the '_items' entry, along with metadata in the '_meta' entry.
-
-        If no appropriate item exists in the database, None is returned instead
+        returns the resulting json data as a dictionary.
 
         Parameters
         ----------
         hash : str, optional
+          The hash of the database item we wish to retrieve.
 
         Returns
         -------
         dict or None
+          If a hash is specified, a single database item with entries '_id',
+          '_etag', 'funcname', 'hash', 'result' and so on.  If no hash is
+          specified, a list of all such items in the database in the '_items'
+          entry, along with metadata in the '_meta' entry.
+          If no appropriate item exists in the database, None.
 
         """
         url = self._url
