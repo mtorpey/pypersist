@@ -15,4 +15,4 @@ results_for_alice/
 *.pyc
 /dist/
 
-/manual/_build/
+/doc/_build/
