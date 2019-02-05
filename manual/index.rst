@@ -10,6 +10,9 @@
    :caption: Contents:
 
    persist
+   diskcache
+   mongodbcache
+   internal
 
 Indices and tables
 ==================

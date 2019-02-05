@@ -11,3 +11,17 @@ using optional arguments, as follows.
 
 .. automodule:: pypersist
    :members:
+
+The default arguments used by ``persist`` rely on code in the following modules:
+
++------------------+--------------------------------+
+| Argument         | Module                         |
++==================+================================+
+| cache            | :mod:`pypersist.diskcache`     |
++------------------+--------------------------------+
+| key              | :mod:`pypersist.preprocessing` |
++------------------+--------------------------------+
+| pickle, unpickle | :mod:`pypersist.pickling`      |
++------------------+--------------------------------+
+| hash             | :mod:`pypersist.hashing`       |
++------------------+--------------------------------+
