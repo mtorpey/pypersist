@@ -1,2 +1,3 @@
 include VERSION
 recursive-include doc *.rst *.py Makefile make.bat
+recursive-include doc/_static .gitkeep
