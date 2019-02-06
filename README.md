@@ -2,6 +2,7 @@ pypersist
 =========
 
 [![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
+[![Documentation Status](https://readthedocs.org/projects/pypersist/badge/?version=latest)](https://pypersist.readthedocs.io/en/latest/?badge=latest)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
 
 pypersist is a persistent memoisation framework for Python 3.  Persistent
