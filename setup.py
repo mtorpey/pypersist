@@ -13,5 +13,6 @@ setup(name='pypersist',
       author_email='mct25@st-andrews.ac.uk',
       license='GPL',
       packages=['pypersist'],
+      include_package_data=True,
       long_description=read('README.md'),
       zip_safe=False)
