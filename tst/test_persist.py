@@ -80,3 +80,28 @@ def test_key():
     with pytest.raises(KeyError) as ke:
         sum.cache[[1,4,3,7,3,12]]
     assert ke.value.args[0] == [1,4,3,7,3,12]
+
+def test_hash():
+    @persist(hash=lambda k: '%s to the %s' % (k[0][1], k[1][1]),
+             pickle=str,
+             unpickle=int)
+    def pow(x,y):
+        return x**y
+    pow.clear()
+
+    assert pow(2,3) == 8
+    assert pow(7,4) == 2401
+    assert pow(1,3) == 1
+    assert pow(10,5) == 100000
+    assert pow(0,0) == 1
+    assert pow(2,16) == 65536
+
+    fnames = listdir('persist/pow')
+    assert sorted(fnames) == ['0 to the 0.out',
+                              '1 to the 3.out',
+                              '10 to the 5.out',
+                              '2 to the 16.out',
+                              '2 to the 3.out',
+                              '7 to the 4.out']
+    assert open('persist/pow/7 to the 4.out', 'r').read() == '2401'
+    assert open('persist/pow/0 to the 0.out', 'r').read() == '1'
