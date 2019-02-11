@@ -8,8 +8,9 @@ def double(x):
 
 double.clear()
 
-assert len(double.cache) == 0
-assert double(3) == 6
-assert len(double.cache) == 1
-assert double.cache
-assert double.cache[(('x', 3),)] == 6
+def test_double():
+    assert len(double.cache) == 0
+    assert double(3) == 6
+    assert len(double.cache) == 1
+    assert double.cache
+    assert double.cache[(('x', 3),)] == 6
