@@ -60,7 +60,8 @@ def test_locations():
     assert foo(1,4,3,a=3) == 11  # Last arg has the default value, so it is ignored
     assert foo(1,4,3,a=7) == 15  # Last arg is kw-only, and used
     assert foo(1,4,a=3,z=3) == 11  # Default arg in non-canonical order
-    assert len(foo.cache) == 2
+    assert foo(1,4,a=3,z=1) == 9  # Default arg z that is not keyword-only
+    assert len(foo.cache) == 3
 
     assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
 
