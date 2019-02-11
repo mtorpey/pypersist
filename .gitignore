@@ -18,3 +18,5 @@ results_for_alice/
 /doc/_build/
 
 .cache/
+
+.coverage
