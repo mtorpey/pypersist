@@ -144,3 +144,24 @@ def test_hash_collision():
     with pytest.raises(HashCollisionError) as hce:
         square(4)
     assert hce.value.args[0] != hce.value.args[1]
+
+def test_unhash():
+    @persist(key=float,
+             hash=lambda k: f'e to the {k}',
+             unhash=lambda s: float(s[9:]))
+    def exp(x):
+        return 2.71828 ** x
+    exp.clear()
+
+    exp(2)
+    exp(2.0)
+    exp(-1)
+    exp(3.14)
+    assert len(exp.cache) == 3
+    keys = [key for key in exp.cache]
+    assert sorted(keys) == [-1, 2.0, 3.14]
+    strings = ['e to the ' + str(item[0]) + ' equals ' + str(item[1])
+               for item in exp.cache.items()]
+    assert sorted(strings) == ['e to the -1.0 equals 0.36787968862663156',
+                               'e to the 2.0 equals 7.3890461584',
+                               'e to the 3.14 equals 23.103818060414167']
