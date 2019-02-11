@@ -4,6 +4,7 @@ from pypersist import persist
 
 from time import sleep
 from os import listdir
+from os.path import join
 
 def test_triple():
     @persist
@@ -46,3 +47,19 @@ def test_pickle():
     assert '0' in results
     assert "'hello!hello!'" in results
     assert 'some random string' not in results
+
+def test_locations():
+    @persist(cache='file://results_for_alice/', funcname='foofighters')
+    def foo(x, y, z=1, *, a=3):
+        return x + y + z + a
+    foo.clear()
+
+    assert foo(1,4,z=3) == 11
+    assert foo(1,y=4,z=3) == 11
+    assert foo(1,z=3,y=4) == 11
+    assert foo(1,4,3,a=3) == 11  # Last arg has the default value, so it is ignored
+    assert foo(1,4,3,a=7) == 15  # Last arg is kw-only, and used
+    assert foo(1,4,a=3,z=3) == 11  # Default arg in non-canonical order
+    assert len(foo.cache) == 2
+
+    assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
