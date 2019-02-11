@@ -1,10 +1,10 @@
 pypersist
 =========
 
-[![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
-[![Documentation Status](https://readthedocs.org/projects/pypersist/badge/?version=latest)](https://pypersist.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/mtorpey/pypersist.svg?branch=master)](https://travis-ci.org/mtorpey/pypersist)
 [![codecov](https://codecov.io/gh/mtorpey/pypersist/branch/master/graph/badge.svg)](https://codecov.io/gh/mtorpey/pypersist)
+[![Documentation Status](https://readthedocs.org/projects/pypersist/badge/?version=latest)](https://pypersist.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=binder/demo.ipynb)
 
 pypersist is a persistent memoisation framework for Python 3.  Persistent
