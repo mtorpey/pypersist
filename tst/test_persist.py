@@ -2,7 +2,6 @@ import pytest
 
 from pypersist import persist
 
-from time import sleep
 from os import listdir
 from os.path import join
 
@@ -63,3 +62,21 @@ def test_locations():
     assert len(foo.cache) == 2
 
     assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
+
+def test_key():
+    @persist(key=lambda *args: sorted(args))
+    def sum(*args):
+        acc = 0
+        for x in args:
+            acc += x
+        return acc
+    sum.clear()
+
+    assert sum(1,4,3,7,3,12) == 30
+    assert len(sum.cache) == 1
+    assert sum(4,12,7,3,3,1) == 30
+    assert len(sum.cache) == 1
+    assert sum.cache[[1,3,3,4,7,12]] == 30
+    with pytest.raises(KeyError) as ke:
+        sum.cache[[1,4,3,7,3,12]]
+    assert ke.value.args[0] == [1,4,3,7,3,12]
