@@ -4,7 +4,7 @@ pypersist
 [![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
 [![Build Status](https://travis-ci.org/mtorpey/pypersist.svg?branch=master)](https://travis-ci.org/mtorpey/pypersist)
 [![Documentation Status](https://readthedocs.org/projects/pypersist/badge/?version=latest)](https://pypersist.readthedocs.io/en/latest/?badge=latest)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=binder/demo.ipynb)
 
 pypersist is a persistent memoisation framework for Python 3.  Persistent
 memoisation is the practice of storing the output of a function permanently to a
@@ -64,7 +64,7 @@ filenames.
 
 Many more options are available.  See the `persist` class documentation for a
 full description, or [launch the included notebook on
-Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=demo.ipynb)
+Binder](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=binder/demo.ipynb)
 for more examples.
 
 See [this HackMD](https://hackmd.io/1M5clex-TYWCuxxgi05k5A) and the Issue
