@@ -1,6 +1,7 @@
 import pytest
 
 from pypersist import persist
+from pypersist.commoncache import HashCollisionError
 
 from os import listdir
 from os.path import join
@@ -105,3 +106,41 @@ def test_hash():
                               '7 to the 4.out']
     assert open('persist/pow/7 to the 4.out', 'r').read() == '2401'
     assert open('persist/pow/0 to the 0.out', 'r').read() == '1'
+
+def test_storekey():
+    @persist(storekey=True)
+    def square(x):
+        return x*x
+    square.clear()
+
+    assert square(12) == 144
+    assert square(0) == 0
+    assert square(8) == 64
+
+    keys = [key for key in square.cache]
+    assert sorted(keys) == [(('x', 0),), (('x', 8),), (('x', 12),)]
+    keys = [key for key in square.cache.keys()]
+    assert sorted(keys) == [(('x', 0),), (('x', 8),), (('x', 12),)]
+    values = [key for key in square.cache.values()]
+    assert sorted(values) == [0, 64, 144]
+    items = [key for key in square.cache.items()]
+    assert sorted(items) == [((('x', 0),), 0),
+                             ((('x', 8),), 64),
+                             ((('x', 12),), 144)]
+
+def test_hash_collision():
+    @persist(hash=lambda k: 'hello world')
+    def square(x):
+        return x*x
+    square.clear()
+    assert square(3) == 9
+    assert square(4) == 9
+
+    @persist(hash=lambda k: 'hello world', storekey=True)
+    def square(x):
+        return x*x
+    square.clear()
+    assert square(3) == 9
+    with pytest.raises(HashCollisionError) as hce:
+        square(4)
+    assert hce.value.args[0] != hce.value.args[1]
