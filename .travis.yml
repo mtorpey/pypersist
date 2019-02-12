@@ -3,6 +3,8 @@ python:
   - "3.6"
 install:
   - pip install pytest-cov codecov eve
+services:
+  - mongodb
 script:
   - python -m pytest --cov=./pypersist
 after_success:
