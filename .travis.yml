@@ -4,7 +4,7 @@ python:
 install:
   - pip install pytest-cov codecov eve
 services:
-  - mongodb
+  - mongodb  # this might not launch fast enough - we could need a delay
 script:
   - python -m pytest --cov=./pypersist
 after_success:
