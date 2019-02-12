@@ -35,8 +35,8 @@ memo_schema = {
     }
 }
 
-memos = {
-    'url': 'memos/<regex("[\w]+"):funcname>',
+persist = {
+    'url': 'persist/<regex("[\w]+"):funcname>',
 
     # by default the standard item entry point is defined as
     # '/people/<ObjectId>'. We leave it untouched, and we also enable an
@@ -61,7 +61,7 @@ MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 
 MONGO_DBNAME = 'memoisation'    # Database name
-DOMAIN = {'memos': memos}    # Collection name
+DOMAIN = {'persist': persist}    # Collection name
 
 RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']

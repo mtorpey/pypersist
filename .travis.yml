@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-  - pip install pytest-cov codecov
+  - pip install pytest-cov codecov eve
 script:
   - python -m pytest --cov=./pypersist
 after_success:
