@@ -4,6 +4,6 @@ python:
 install:
   - pip install pytest-cov codecov
 script:
-  - python -m pytest --cov=./
+  - python -m pytest --cov=./pypersist
 after_success:
   - codecov
