@@ -7,7 +7,7 @@ import subprocess
 from requests import ConnectionError
 from time import sleep
 
-SLEEP_TIME = 0.25
+SLEEP_TIME = 0.5
 
 def test_mongo():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])                                    
