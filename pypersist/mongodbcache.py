@@ -93,8 +93,6 @@ class Cache:
         r = requests.post(url=self._url,
                           headers=self._headers,
                           json=new_item)
-        if r.status_code != 201:
-            raise MongoDBError(r.status_code, r.reason)
 
     def __delitem__(self, key):
         # Get the item from the database
@@ -108,8 +106,7 @@ class Cache:
         headers = dict(self._headers)
         headers['If-Match'] = db_item['_etag']
         r = requests.delete(url=url, headers=headers)
-        if r.status_code != 204:
-            raise MongoDBError(r.status_code, r.reason)
+        r.raise_for_status()
 
     def __len__(self):
         db_items = self._get_db()
@@ -122,7 +119,7 @@ class Cache:
         """Delete all the results stored in this cache."""
         r = requests.delete(url=self._url)
         if r.status_code not in [204, 404]:
-            raise MongoDBError(r.status_code, r.reason)
+            r.raise_for_status()
 
     def _get_db(self, hash=None):
         """Return all db items for this function, or one with this hash
@@ -157,7 +154,7 @@ class Cache:
             return None
         else:
             # Database error
-            raise MongoDBError(r.status_code, r.reason)
+            r.raise_for_status()
 
 
 class CacheWithKeys(Cache, MutableMapping):
@@ -198,7 +195,3 @@ class CacheWithKeys(Cache, MutableMapping):
                 assert(self._cache._func._unhash)
                 key = self._cache._func._unhash(item['hash'])
             return key
-
-
-class MongoDBError(Exception):
-    """Exception for a problem interacting with a MongoDB database"""

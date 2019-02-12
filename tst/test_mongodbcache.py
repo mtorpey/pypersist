@@ -4,7 +4,7 @@ from pypersist import persist
 from pypersist.commoncache import HashCollisionError
 
 import subprocess
-from signal import SIGINT
+from requests import ConnectionError
 from time import sleep
 
 SLEEP_TIME = 0.5
@@ -73,6 +73,9 @@ def test_storekey():
         def square(x):
             return x*x
         square.clear()
+
+        items = [key for key in square.cache.items()]
+        assert sorted(items) == []
 
         assert square(12) == 144
         assert square(0) == 0
@@ -161,3 +164,13 @@ def test_unhash_collision():
         assert hce.value.args == (16, 12)
     finally:
         mongo_process.kill()
+
+def test_noserver():
+    @persist(cache='mongodb://127.0.0.1:5000/doesntexist')
+    def deg_to_rad(deg):
+        return deg / 360 * 2 * 3.141592653589793
+
+    with pytest.raises(ConnectionError) as ce:
+        deg_to_rad.clear()
+    with pytest.raises(ConnectionError) as re:
+        assert deg_to_rad(90) == 3.141592653589793 / 2
