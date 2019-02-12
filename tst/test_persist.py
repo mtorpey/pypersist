@@ -25,6 +25,11 @@ def test_triple():
         print(triple.cache[(('x', 5),)])
     assert ke.value.args[0] == (('x', 5),)
     assert len(triple.cache) == 2
+    del triple.cache[(('x', 3),)]
+    assert len(triple.cache) == 1
+    with pytest.raises(KeyError) as ke:
+        del triple.cache[(('x', 5),)]
+    assert ke.value.args[0] == (('x', 5),)
 
 def test_pickle():
     @persist(pickle=repr, unpickle=eval)
@@ -166,3 +171,17 @@ def test_unhash():
     assert sorted(strings) == ['e to the -1.0 equals 0.36787968862663156',
                                'e to the 2.0 equals 7.3890461584',
                                'e to the 3.14 equals 23.103818060414167']
+
+def test_unhash_collision():
+    @persist(key=lambda x: x,
+             hash=lambda k: '16',  # same as hash=str for x==16 only
+             unhash=int)
+    def square(x):
+        return x*x
+    square.clear()
+
+    assert square(16) == 256
+    assert square(16) == 256
+    with pytest.raises(HashCollisionError) as hce:
+        square(12)
+    assert hce.value.args == (16, 12)
