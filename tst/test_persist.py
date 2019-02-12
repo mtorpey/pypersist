@@ -71,7 +71,7 @@ def test_locations():
     assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
 
 def test_key():
-    @persist(key=lambda *args: sorted(args))
+    @persist(cache='results_for_alice', key=lambda *args: sorted(args))
     def sum(*args):
         acc = 0
         for x in args:
