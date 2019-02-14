@@ -7,7 +7,7 @@ pypersist
 [![PyPI version](https://badge.fury.io/py/pypersist.svg)](https://badge.fury.io/py/pypersist)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/mtorpey/pypersist/master?filepath=binder/demo.ipynb)
 
-pypersist is a persistent memoisation framework for Python 3.  Persistent
+pypersist is a persistent memoisation framework for Python 2 and 3.  Persistent
 memoisation is the practice of storing the output of a function permanently to a
 disk or a server so that the result can be looked up automatically in the
 future, avoiding any known results being recomputed unnecessarily.
