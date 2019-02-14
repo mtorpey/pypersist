@@ -14,7 +14,7 @@ results_for_alice/
 
 *.pyc
 /dist/
-
+/build/
 /doc/_build/
 
 .cache/
