@@ -10,7 +10,7 @@ classes defined below.
 
 from .commoncache import HashCollisionError
 
-from collections.abc import MutableMapping, Iterator
+from collections import MutableMapping, Iterator
 from os import makedirs, remove, listdir
 from os.path import exists, join
 
@@ -151,6 +151,8 @@ class CacheWithKeys(Cache, MutableMapping):
                 file.close()
             self._pos += 1
             return key
+
+        next = __next__  # for Python 2 compatibility
 
 
 # Filename extensions

@@ -10,7 +10,13 @@ this normalised tuple.
 
 """
 
-from inspect import getfullargspec
+from sys import version_info
+PYTHON_VERSION = version_info[0]  # major version number
+
+if PYTHON_VERSION >= 3:
+    from inspect import getfullargspec
+else:
+    from inspect import getargspec as getfullargspec
 
 
 def arg_tuple(func, *args, **kwargs):
@@ -76,7 +82,7 @@ def arg_tuple(func, *args, **kwargs):
         for (arg, val) in zip(spec.args[-len(spec.defaults):], spec.defaults):
             if kwargs.get(arg) == val:
                 kwargs.pop(arg)
-    if spec.kwonlydefaults is not None:
+    if hasattr(spec, 'kwonlydefaults') and spec.kwonlydefaults is not None:
         for arg in spec.kwonlydefaults:
             if kwargs.get(arg) == spec.kwonlydefaults[arg]:
                 kwargs.pop(arg)

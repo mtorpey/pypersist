@@ -5,6 +5,9 @@ from pypersist.commoncache import HashCollisionError
 
 from os import listdir
 from os.path import join
+from sys import version_info
+
+PYTHON_VERSION = version_info[0]  # major version number
 
 def test_triple():
     @persist
@@ -54,9 +57,13 @@ def test_pickle():
     assert 'some random string' not in results
 
 def test_locations():
-    @persist(cache='file://results_for_alice/', funcname='foofighters')
-    def foo(x, y, z=1, *, a=3):
-        return x + y + z + a
+    if PYTHON_VERSION >= 3:
+        # keyword-only argument a
+        from py3_only_funcs import foo
+    else:
+        @persist(cache='file://results_for_alice/', funcname='foofighters')
+        def foo(x, y, z=1, a=3):
+            return x + y + z + a
     foo.clear()
 
     assert foo(1,4,z=3) == 11
@@ -153,7 +160,7 @@ def test_hash_collision():
 
 def test_unhash():
     @persist(key=float,
-             hash=lambda k: f'e to the {k}',
+             hash=lambda k: 'e to the ' + str(k),
              unhash=lambda s: float(s[9:]))
     def exp(x):
         return 2.71828 ** x
@@ -168,9 +175,11 @@ def test_unhash():
     assert sorted(keys) == [-1, 2.0, 3.14]
     strings = ['e to the ' + str(item[0]) + ' equals ' + str(item[1])
                for item in exp.cache.items()]
-    assert sorted(strings) == ['e to the -1.0 equals 0.36787968862663156',
-                               'e to the 2.0 equals 7.3890461584',
-                               'e to the 3.14 equals 23.103818060414167']
+    assert [s[:30] for s in sorted(strings)] == [
+        'e to the -1.0 equals 0.3678796',
+        'e to the 2.0 equals 7.38904615',
+        'e to the 3.14 equals 23.103818'
+    ]
 
 def test_unhash_collision():
     @persist(key=lambda x: x,

@@ -123,7 +123,7 @@ def test_unhash():
     sleep(SLEEP_TIME)
     try:
         @persist(key=float,
-                 hash=lambda k: f'e to the {k}',
+                 hash=lambda k: 'e to the ' + str(k),
                  unhash=lambda s: float(s[9:]),
                  cache='mongodb://127.0.0.1:5000/persist')
         def exp(x):
@@ -139,9 +139,11 @@ def test_unhash():
         assert sorted(keys) == [-1, 2.0, 3.14]
         strings = ['e to the ' + str(item[0]) + ' equals ' + str(item[1])
                    for item in exp.cache.items()]
-        assert sorted(strings) == ['e to the -1.0 equals 0.36787968862663156',
-                                   'e to the 2.0 equals 7.3890461584',
-                                   'e to the 3.14 equals 23.103818060414167']
+        assert [s[:30] for s in sorted(strings)] == [
+            'e to the -1.0 equals 0.3678796',
+            'e to the 2.0 equals 7.38904615',
+            'e to the 3.14 equals 23.103818'
+        ]
     finally:
         mongo_process.kill()
 

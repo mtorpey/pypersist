@@ -12,7 +12,7 @@ To start a MongoDB/REST server for use with this cache, navigate to the
 
 from .commoncache import HashCollisionError
 
-from collections.abc import MutableMapping, Iterator
+from collections import MutableMapping, Iterator
 from os.path import join
 import requests
 import json
@@ -195,3 +195,5 @@ class CacheWithKeys(Cache, MutableMapping):
                 assert(self._cache._func._unhash)
                 key = self._cache._func._unhash(item['hash'])
             return key
+
+        next = __next__  # for Python 2 compatibility
