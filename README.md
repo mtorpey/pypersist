@@ -71,4 +71,20 @@ for more examples.
 See [this HackMD](https://hackmd.io/1M5clex-TYWCuxxgi05k5A) and the Issue
 tracker for current plans.
 
-pypersist is a part of the OpenDreamKit project: https://opendreamkit.org/
+Acknowledgements
+----------------
+pypersist was created as part of the OpenDreamKit project: 
+https://opendreamkit.org/
+
+<table class="none">
+<tr>
+<td>
+  <img src="http://opendreamkit.org/public/logos/Flag_of_Europe.svg" width="128">
+</td>
+<td>
+  This infrastructure is part of a project that has received funding from the
+  European Union's Horizon 2020 research and innovation programme under grant
+  agreement No 676541.
+</td>
+</tr>
+</table>
