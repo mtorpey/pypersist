@@ -71,6 +71,17 @@ for more examples.
 See [this HackMD](https://hackmd.io/1M5clex-TYWCuxxgi05k5A) and the Issue
 tracker for current plans.
 
+Citing
+------
+Please cite this package as:
+
+[Tor19] 
+M. Torpey, 
+pypersist, 
+Python memoisation framework,
+Version 0.5 (2019),
+https://github.com/mtorpey/pypersist.
+
 Acknowledgements
 ----------------
 pypersist was created as part of the OpenDreamKit project: 
