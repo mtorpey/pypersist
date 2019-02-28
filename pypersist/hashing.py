@@ -1,13 +1,13 @@
 """Default method used by `persist` for hashing keys."""
 
-from pickle import dumps
+from . import pickling
 from hashlib import sha256
 from base64 import urlsafe_b64encode
 CHAR_ENCODING = 'utf-8'
 
 
 def hash(key):
-    """Return a string which is a hash of the argument given.
+    """Return a string which is a hash of the argument given
 
     It computes the SHA-256 sum of the key and returns it as a base 64 string.
     The string consists of alphanumeric characters, hyphens and underscores,
@@ -28,9 +28,10 @@ def hash(key):
     'wXS1bv_UbdX4riiyyA3Djjo7JeiEfyGI7o1-hGMnkz0'
 
     """
-    b = dumps(key)  # Pickle the key to a bytes object
-    b = sha256(b).digest()  # Hash the bytes using sha-1
+    b = pickling.pickle_to_bytes(key)  # Pickle the key to a bytes object
+    b = sha256(b).digest()  # Hash the bytes using sha-256
     b = urlsafe_b64encode(b)  # Convert the hash to a base64 string
+    assert b.endswith(b'=')
     b = b[0:-1]  # Strip the final padding character ('=')
     s = b.decode(CHAR_ENCODING)  # Convert from bytes to string
 
