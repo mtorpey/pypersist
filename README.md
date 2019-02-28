@@ -79,7 +79,7 @@ Please cite this package as:
 M. Torpey, 
 pypersist, 
 Python memoisation framework,
-Version 0.5 (2019),
+Version X.Y (20XX),
 https://github.com/mtorpey/pypersist.
 
 Acknowledgements
