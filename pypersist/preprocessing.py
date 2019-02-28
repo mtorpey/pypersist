@@ -62,7 +62,6 @@ def arg_tuple(func, *args, **kwargs):
     (('a', 15), ('x', 10))
 
     """
-
     kwargs = kwargs.copy()
 
     spec = getfullargspec(func)
