@@ -1,9 +1,11 @@
 from setuptools import setup
 import os
 
+
 def read(fname):
     path = os.path.join(os.path.dirname(__file__), fname)
     return open(path).read().strip()
+
 
 setup(name='pypersist',
       version=read("VERSION"),

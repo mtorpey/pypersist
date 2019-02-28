@@ -39,8 +39,8 @@ class Cache:
         specific to local disk storage, such as the key, hash, and pickle
         functions, are taken from this.
     url : str
-        URL of the pypersist MongoDB database that will be used to store and load
-        results.  The same database can be used for several different
+        URL of the pypersist MongoDB database that will be used to store and
+        load results.  The same database can be used for several different
         functions, since the function's `funcname` will be stored with each
         result.
 
