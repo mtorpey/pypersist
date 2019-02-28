@@ -26,7 +26,7 @@ memo_schema = {
         'required': False
     },
     'metadata': {
-        'type': 'dict',
+        'type': 'string',
         'required': False
     },
     'comments': {

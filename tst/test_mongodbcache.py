@@ -6,6 +6,7 @@ from pypersist.commoncache import HashCollisionError
 import subprocess
 from requests import ConnectionError
 from time import sleep
+from datetime import datetime
 
 SLEEP_TIME = 0.5
 
@@ -176,3 +177,28 @@ def test_noserver():
         deg_to_rad.clear()
     with pytest.raises(ConnectionError) as re:
         assert deg_to_rad(90) == 3.141592653589793 / 2
+
+def test_metadata():
+    mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
+    sleep(SLEEP_TIME)
+    try:
+        @persist(metadata=lambda : "Result cached at " + str(datetime.now()),
+                 hash=lambda k: str(k[0][1]),
+                 storekey=True,
+                 cache='mongodb://127.0.0.1:5000/persist')
+        def deg_to_rad(deg):
+            return deg * 3.1415926535 / 180
+        deg_to_rad.clear()
+
+        assert abs(deg_to_rad(90) - 3.14159/2) < 0.0001
+        deg_to_rad(180)
+        deg_to_rad(11)
+        assert len(deg_to_rad.cache) == 3
+
+        assert abs(deg_to_rad.cache[(('deg',90),)] - 3.14159/2) < 0.0001
+        h = deg_to_rad._hash((('deg',90),))
+        meta = deg_to_rad.cache._get_db(h)['metadata']
+        assert meta.startswith('Result cached at 20')
+        assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
+    finally:
+        mongo_process.kill()

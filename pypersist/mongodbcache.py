@@ -90,9 +90,13 @@ class Cache:
                     'result': self._func._pickle(val)}
         if self._func._storekey:
             new_item['key'] = self._func._pickle(key)
+        if self._func._metadata:
+            new_item['metadata'] = self._func._metadata()
+
         r = requests.post(url=self._url,
                           headers=self._headers,
                           json=new_item)
+        r.raise_for_status()
 
     def __delitem__(self, key):
         # Get the item from the database

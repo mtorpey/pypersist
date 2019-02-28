@@ -4,8 +4,9 @@ from pypersist import persist
 from pypersist.commoncache import HashCollisionError
 
 from os import listdir
-from os.path import join
+from os.path import join, exists
 from sys import version_info
+from datetime import datetime
 
 PYTHON_VERSION = version_info[0]  # major version number
 
@@ -194,3 +195,19 @@ def test_unhash_collision():
     with pytest.raises(HashCollisionError) as hce:
         square(12)
     assert hce.value.args == (16, 12)
+
+def test_metadata():
+    @persist(metadata=lambda : "Result cached at " + str(datetime.now()),
+             hash=lambda k: str(k[0][1]))
+    def deg_to_rad(deg):
+        return deg * 3.1415926535 / 180
+    deg_to_rad.clear()
+
+    assert abs(deg_to_rad(90) - 3.14159/2) < 0.0001
+    fname = 'persist/deg_to_rad/90.meta'
+    assert exists(fname)
+    meta = open(fname, 'r').read()
+    assert meta.startswith('Result cached at 20')
+    assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
+    deg_to_rad.clear()
+    assert not exists(fname)

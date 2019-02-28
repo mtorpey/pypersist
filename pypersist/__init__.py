@@ -14,7 +14,8 @@ def persist(func=None,
             pickle=pickling.pickle,
             unpickle=pickling.unpickle,
             hash=hashing.hash,
-            unhash=None):
+            unhash=None,
+            metadata=None):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -73,6 +74,11 @@ def persist(func=None,
         Function that, if specified, should be the inverse of `hash`.  If this
         is specified, it may be used whenever the keys of `cache` are
         requested.  Default is None.
+    metadata : function( -> str), optional
+        Function that takes no arguments and returns a string containing
+        metadata to be stored with the result currently being written.  This
+        might include the current time, or some data identifying the user or
+        system that ran the computation.
 
     Attributes
     ----------
@@ -134,6 +140,7 @@ def persist(func=None,
                 self._funcname = func.__name__
             else:
                 self._funcname = funcname
+            self._metadata = metadata
 
             # Determine which backend to use
             try:

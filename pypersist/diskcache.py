@@ -77,17 +77,23 @@ class Cache:
             keyfile = open(keyfname, 'w')
             keyfile.write(self._func._pickle(key))
             keyfile.close()
+        if self._func._metadata:
+            metafname = self._key_to_fname(key, META)
+            metafile = open(metafname, 'w')
+            metafile.write(self._func._metadata())
+            metafile.close()
         fname = self._key_to_fname(key, OUT)
         file = open(fname, 'w')
         file.write(self._func._pickle(val))
         file.close()
 
     def __delitem__(self, key):
-        fname = self._key_to_fname(key, OUT)
-        if exists(fname):
-            remove(fname)
-        else:
-            raise KeyError(key)
+        for ext in [OUT, KEY, META]:
+            fname = self._key_to_fname(key, ext)
+            if exists(fname):
+                remove(fname)
+            elif ext == OUT:
+                raise KeyError(key)
 
     def __len__(self):
         # Number of files ending with '.out'
