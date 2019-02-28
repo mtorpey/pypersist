@@ -71,6 +71,14 @@ def test_storekey():
     try:
         @persist(storekey=True,
                  cache='mongodb://127.0.0.1:5000/persist')
+        def never_call_this(x):  # a function that is never called,
+            return x             # so the database has never heard of it
+        assert len(never_call_this.cache) == 0
+        keys = [key for key in never_call_this.cache]
+        assert len(keys) == 0
+
+        @persist(storekey=True,
+                 cache='mongodb://127.0.0.1:5000/persist')
         def square(x):
             return x*x
         square.clear()
