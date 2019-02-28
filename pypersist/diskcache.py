@@ -1,4 +1,4 @@
-"""Persistent memoisation backend that saves results in the local file system.
+"""Persistent memoisation backend that saves results in the local file system
 
 The `persist` decorator takes a `cache` argument, which details what sort of
 backend to use for the cache.  If this string begins with 'file://', or if no
@@ -16,7 +16,7 @@ from os.path import exists, join
 
 
 class Cache:
-    """Dictionary-like object for saving function outputs to disk.
+    """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
     stores computed values on disk in a specified directory so that they can be
@@ -100,7 +100,7 @@ class Cache:
         return sum(fname.endswith(OUT) for fname in listdir(self._dir))
 
     def clear(self):
-        """Delete all the results stored in this cache."""
+        """Delete all the results stored in this cache"""
         for f in listdir(self._dir):
             path = join(self._dir, f)
             # TODO: safety checks?

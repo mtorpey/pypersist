@@ -1,4 +1,4 @@
-"""Persistent memoisation backend that saves results on a MongoDB REST server.
+"""Persistent memoisation backend that saves results on a MongoDB REST server
 
 The `persist` decorator takes a `cache` argument, which details what sort of
 backend to use for the cache.  If this string begins with 'mongodb://', then a
@@ -19,7 +19,7 @@ import json
 
 
 class Cache:
-    """Dictionary-like object for saving function outputs to disk.
+    """Dictionary-like object for saving function outputs to disk
 
     This cache, which can be used by the `persist` decorator in `persist.py`,
     stores computed values in a specified MongoDB database so that they can be
@@ -120,7 +120,7 @@ class Cache:
             return 0
 
     def clear(self):
-        """Delete all the results stored in this cache."""
+        """Delete all the results stored in this cache"""
         r = requests.delete(url=self._url)
         if r.status_code not in [204, 404]:
             r.raise_for_status()

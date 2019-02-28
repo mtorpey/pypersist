@@ -1,4 +1,4 @@
-"""Default method used by `persist` for hashing keys."""
+"""Default method used by `persist` for hashing keys"""
 
 from . import pickling
 from hashlib import sha256
