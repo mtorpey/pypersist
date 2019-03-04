@@ -1,5 +1,3 @@
-base64
-collections
 functools
 hashlib
 inspect
