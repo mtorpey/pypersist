@@ -1,0 +1,18 @@
+This directory contains a test suite that tests most parts of the package.
+
+These tests are run automatically by Travis, but can be run locally by
+navigating to the root `pypersist` directory (the parent of this directory) and
+calling
+
+    python -m pytest
+
+To get a report of code coverage, you can instead call
+
+    python -m pytest --cov=pypersist
+
+In addition to the requirements for installing the package, these tests require
+MongoDB, Eve, pytest, and pytest-cov to be installed.  You can install these
+using
+
+    sudo apt install mongodb
+    pip install --user eve pytest pytest-cov
