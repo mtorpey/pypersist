@@ -1,14 +1,32 @@
 dist: bionic
 language: python
-python:
-  - "2.7"
-  - "3.6"
-  - "3.7"
-install:
-  - pip install pytest-cov codecov eve
 services:
   - mongodb  # this might not launch fast enough - we could need a delay
+  - docker
+matrix:
+  include:
+    - env:
+      - SAGE=true
+    - python: "2.7"
+    - python: "3.6"
+    - python: "3.7"
+install:
+  - pip install pytest-cov codecov eve
 script:
-  - python -m pytest --cov=./pypersist
+  - if [ $SAGE ];
+    then
+      docker pull sagemath/sagemath;
+      docker run -v "$PWD:/home/sage/pypersist" --name="my_image" sagemath/sagemath bash pypersist/tst/sage_test.sh;
+      retn_code=$?;
+      echo "Got exit code $retn_code from docker";
+      docker cp my_image:/home/sage/pypersist-copy/.coverage .;
+      if [ $retn_code -ne 0 ];
+      then
+        exit $retn_code;
+      fi;
+      sed -i 's/sage\/pypersist-copy/travis\/build\/mtorpey\/pypersist/g' .coverage;
+    else
+      python -m pytest --cov=./pypersist;
+    fi;
 after_success:
   - codecov
