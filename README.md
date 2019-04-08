@@ -87,6 +87,8 @@ Acknowledgements
 pypersist was created as part of the OpenDreamKit project: 
 https://opendreamkit.org/
 
+This part of the project is summarised in [this report](https://github.com/OpenDreamKit/OpenDreamKit/blob/master/WP6/D6.9/report-final.pdf).
+
 <table class="none">
 <tr>
 <td>
