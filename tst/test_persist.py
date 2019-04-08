@@ -57,6 +57,18 @@ def test_pickle():
     assert "'hello!hello!'" in results
     assert 'some random string' not in results
 
+def test_unpicklable():
+    @persist
+    def multiplier(x):
+        """Returns a function that multiplies by x"""
+        return lambda i: x*i
+
+    # lambdas cannot be pickled, so this raises an error
+    with pytest.raises(Exception):
+        f = multiplier(3)
+    with pytest.raises(Exception):
+        f = multiplier(3)
+
 def test_locations():
     if PYTHON_VERSION >= 3:
         # keyword-only argument a
