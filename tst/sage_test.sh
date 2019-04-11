@@ -24,5 +24,5 @@ sage --pip install pytest-cov codecov eve
 echo "done installing!"
 
 echo "running tests..."
-sage -python -m pytest --doctest-modules --cov=./pypersist
+sage -python -m pytest --cov=./pypersist
 exit $?
