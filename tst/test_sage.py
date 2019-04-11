@@ -12,9 +12,10 @@ from sys import modules
 
 try:
     from sage.all import *
-    SAGE=True
+    SAGE = True
 except ImportError:
-    SAGE=False
+    SAGE = False
+
 
 def test_triple():
     if not SAGE:

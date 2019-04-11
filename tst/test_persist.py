@@ -10,6 +10,7 @@ from datetime import datetime
 
 PYTHON_VERSION = version_info[0]  # major version number
 
+
 def test_triple():
     @persist
     def triple(x):
@@ -35,6 +36,7 @@ def test_triple():
         del triple.cache[(('x', 5),)]
     assert ke.value.args[0] == (('x', 5),)
 
+
 def test_pickle():
     @persist(pickle=repr, unpickle=eval)
     def double(x):
@@ -57,6 +59,7 @@ def test_pickle():
     assert "'hello!hello!'" in results
     assert 'some random string' not in results
 
+
 def test_unpicklable():
     @persist
     def multiplier(x):
@@ -69,6 +72,7 @@ def test_unpicklable():
     with pytest.raises(Exception):
         f = multiplier(3)
 
+
 def test_locations():
     if PYTHON_VERSION >= 3:
         # keyword-only argument a
@@ -79,16 +83,17 @@ def test_locations():
             return x + y + z + a
     foo.clear()
 
-    assert foo(1,4,z=3) == 11
-    assert foo(1,y=4,z=3) == 11
-    assert foo(1,z=3,y=4) == 11
-    assert foo(1,4,3,a=3) == 11  # Last arg has the default value, so it is ignored
-    assert foo(1,4,3,a=7) == 15  # Last arg is kw-only, and used
-    assert foo(1,4,a=3,z=3) == 11  # Default arg in non-canonical order
-    assert foo(1,4,a=3,z=1) == 9  # Default arg z that is not keyword-only
+    assert foo(1, 4, z=3) == 11
+    assert foo(1, y=4, z=3) == 11
+    assert foo(1, z=3, y=4) == 11
+    assert foo(1, 4, 3, a=3) == 11  # Last arg has the default value - ignored
+    assert foo(1, 4, 3, a=7) == 15  # Last arg is kw-only, and used
+    assert foo(1, 4, a=3, z=3) == 11  # Default arg in non-canonical order
+    assert foo(1, 4, a=3, z=1) == 9  # Default arg z that is not keyword-only
     assert len(foo.cache) == 3
 
     assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
+
 
 def test_key():
     @persist(cache='results_for_alice', key=lambda *args: sorted(args))
@@ -99,29 +104,30 @@ def test_key():
         return acc
     sum.clear()
 
-    assert sum(1,4,3,7,3,12) == 30
+    assert sum(1, 4, 3, 7, 3, 12) == 30
     assert len(sum.cache) == 1
-    assert sum(4,12,7,3,3,1) == 30
+    assert sum(4, 12, 7, 3, 3, 1) == 30
     assert len(sum.cache) == 1
-    assert sum.cache[[1,3,3,4,7,12]] == 30
+    assert sum.cache[[1, 3, 3, 4, 7, 12]] == 30
     with pytest.raises(KeyError) as ke:
-        sum.cache[[1,4,3,7,3,12]]
-    assert ke.value.args[0] == [1,4,3,7,3,12]
+        sum.cache[[1, 4, 3, 7, 3, 12]]
+    assert ke.value.args[0] == [1, 4, 3, 7, 3, 12]
+
 
 def test_hash():
     @persist(hash=lambda k: '%s to the %s' % (k[0][1], k[1][1]),
              pickle=str,
              unpickle=int)
-    def pow(x,y):
+    def pow(x, y):
         return x**y
     pow.clear()
 
-    assert pow(2,3) == 8
-    assert pow(7,4) == 2401
-    assert pow(1,3) == 1
-    assert pow(10,5) == 100000
-    assert pow(0,0) == 1
-    assert pow(2,16) == 65536
+    assert pow(2, 3) == 8
+    assert pow(7, 4) == 2401
+    assert pow(1, 3) == 1
+    assert pow(10, 5) == 100000
+    assert pow(0, 0) == 1
+    assert pow(2, 16) == 65536
 
     fnames = listdir('persist/pow')
     assert sorted(fnames) == ['0 to the 0.out',
@@ -132,6 +138,7 @@ def test_hash():
                               '7 to the 4.out']
     assert open('persist/pow/7 to the 4.out', 'r').read() == '2401'
     assert open('persist/pow/0 to the 0.out', 'r').read() == '1'
+
 
 def test_storekey():
     @persist(storekey=True)
@@ -154,6 +161,7 @@ def test_storekey():
                              ((('x', 8),), 64),
                              ((('x', 12),), 144)]
 
+
 def test_hash_collision():
     @persist(hash=lambda k: 'hello world')
     def square(x):
@@ -170,6 +178,7 @@ def test_hash_collision():
     with pytest.raises(HashCollisionError) as hce:
         square(4)
     assert hce.value.args[0] != hce.value.args[1]
+
 
 def test_unhash():
     @persist(key=float,
@@ -194,6 +203,7 @@ def test_unhash():
         'e to the 3.14 equals 23.103818'
     ]
 
+
 def test_unhash_collision():
     @persist(key=lambda x: x,
              hash=lambda k: '16',  # same as hash=str for x==16 only
@@ -208,8 +218,9 @@ def test_unhash_collision():
         square(12)
     assert hce.value.args == (16, 12)
 
+
 def test_metadata():
-    @persist(metadata=lambda : "Result cached at " + str(datetime.now()),
+    @persist(metadata=lambda: "Result cached at " + str(datetime.now()),
              hash=lambda k: str(k[0][1]))
     def deg_to_rad(deg):
         return deg * 3.1415926535 / 180
@@ -223,6 +234,7 @@ def test_metadata():
     assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
     deg_to_rad.clear()
     assert not exists(fname)
+
 
 def test_methods():
     class A:
@@ -243,8 +255,8 @@ def test_methods():
     assert a.this_plus_number(10) == 15
     assert b.this_plus_number(4) == 7
     assert b.this_plus_number(4) == 7
-    assert a.this_plus_number.cache[(5,10)] == 15
-    assert A.this_plus_number.cache[(5,10)] == 15
+    assert a.this_plus_number.cache[(5, 10)] == 15
+    assert A.this_plus_number.cache[(5, 10)] == 15
     assert len(A.this_plus_number.cache) == 2
     assert len(a.this_plus_number.cache) == 2
     assert len(b.this_plus_number.cache) == 2

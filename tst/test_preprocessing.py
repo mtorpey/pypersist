@@ -6,6 +6,7 @@ from sys import version_info
 
 PYTHON_VERSION = version_info[0]  # major version number
 
+
 def test_baz():
     if PYTHON_VERSION >= 3:
         from py3_only_funcs import baz
@@ -22,7 +23,7 @@ def test_baz():
                'baz() takes from 2 to 4 positional arguments but 5 were given')
     with pytest.raises(TypeError) as te:
         arg_tuple(baz, 1, 2, 3, 4, 5, 6, 7, 8)
-    
+
 
 def test_varargs():
     def foo(*someargs):

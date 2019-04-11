@@ -203,33 +203,33 @@ def persist(func=None,
         def __get__(self, instance, cls):
             """Bind this object to an instance of a class, as a method
 
-            If `func` was defined as a method of a class, then `__get__` will be
-            called by Python when an instance of that class calls the method for
-            the first time.  We create a new `persist_wrapper` object in exactly
-            the same way this one was created, but supplying an `instance`
-            argument, which is the class instance to which this method should be
-            bound.
+            If `func` was defined as a method of a class, then `__get__` will
+            be called by Python when an instance of that class calls the method
+            for the first time.  We create a new `persist_wrapper` object in
+            exactly the same way this one was created, but supplying an
+            `instance` argument, which is the class instance to which this
+            method should be bound.
 
             We replace the instance's method (this wrapper) with the new
             wrapper, and then return it.  In this way, we ensure that this
             `__get__` function is only called once per instance.  The `__get__`
             function of the new wrapper should never be called.
 
-            If `func` was not defined as a method of a class, this will probably
-            never be called.  But if it is, then the present wrapper is returned
-            unchanged.
+            If `func` was not defined as a method of a class, this will
+            probably never be called.  But if it is, then the present wrapper
+            is returned unchanged.
 
             Parameters
             ----------
             self : persist_wrapper
-                This wrapper, i.e. the memoised method that is being called.  It
-                should not yet have been called with the instance to which it is
-                now bound.
+                This wrapper, i.e. the memoised method that is being called.
+                It should not yet have been called with the instance to which
+                it is now bound.
             instance : cls
-                An instance of the class in which this function was defined as a
-                method.  This instance is currently trying to use the method for
-                the first time, and so requires a version of the method that is
-                bound to it.
+                An instance of the class in which this function was defined as
+                a method.  This instance is currently trying to use the method
+                for the first time, and so requires a version of the method
+                that is bound to it.
             cls : class
                 The class in which this function was defined as a method.
                 `instance` is an instance of this class.

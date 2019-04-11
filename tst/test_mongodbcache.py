@@ -10,8 +10,9 @@ from datetime import datetime
 
 SLEEP_TIME = 0.5
 
+
 def test_mongo():
-    mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])                                    
+    mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
     sleep(SLEEP_TIME)
     try:
         @persist(cache='mongodb://http://127.0.0.1:5000/persist')
@@ -40,6 +41,7 @@ def test_mongo():
     finally:
         mongo_process.kill()
 
+
 def test_hash():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
     sleep(SLEEP_TIME)
@@ -48,22 +50,23 @@ def test_hash():
                  pickle=str,
                  unpickle=int,
                  cache='mongodb://127.0.0.1:5000/persist')
-        def pow(x,y):
+        def pow(x, y):
             return x**y
         pow.clear()
 
-        assert pow(2,3) == 8
-        assert pow(7,4) == 2401
-        assert pow(1,3) == 1
-        assert pow(10,5) == 100000
-        assert pow(0,0) == 1
-        assert pow(2,16) == 65536
-        assert pow(10,5) == 100000
-        assert pow(0,0) == 1
+        assert pow(2, 3) == 8
+        assert pow(7, 4) == 2401
+        assert pow(1, 3) == 1
+        assert pow(10, 5) == 100000
+        assert pow(0, 0) == 1
+        assert pow(2, 16) == 65536
+        assert pow(10, 5) == 100000
+        assert pow(0, 0) == 1
 
         assert len(pow.cache) == 6
     finally:
         mongo_process.kill()
+
 
 def test_storekey():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
@@ -103,6 +106,7 @@ def test_storekey():
     finally:
         mongo_process.kill()
 
+
 def test_hash_collision():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
     sleep(SLEEP_TIME)
@@ -126,6 +130,7 @@ def test_hash_collision():
         assert hce.value.args[0] != hce.value.args[1]
     finally:
         mongo_process.kill()
+
 
 def test_unhash():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
@@ -156,6 +161,7 @@ def test_unhash():
     finally:
         mongo_process.kill()
 
+
 def test_unhash_collision():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
     sleep(SLEEP_TIME)
@@ -176,6 +182,7 @@ def test_unhash_collision():
     finally:
         mongo_process.kill()
 
+
 def test_noserver():
     @persist(cache='mongodb://127.0.0.1:5000/doesntexist')
     def deg_to_rad(deg):
@@ -186,11 +193,12 @@ def test_noserver():
     with pytest.raises(ConnectionError) as re:
         assert deg_to_rad(90) == 3.141592653589793 / 2
 
+
 def test_metadata():
     mongo_process = subprocess.Popen(['python', 'mongodb_server/run.py'])
     sleep(SLEEP_TIME)
     try:
-        @persist(metadata=lambda : "Result cached at " + str(datetime.now()),
+        @persist(metadata=lambda: "Result cached at " + str(datetime.now()),
                  hash=lambda k: str(k[0][1]),
                  storekey=True,
                  cache='mongodb://127.0.0.1:5000/persist')
@@ -203,8 +211,8 @@ def test_metadata():
         deg_to_rad(11)
         assert len(deg_to_rad.cache) == 3
 
-        assert abs(deg_to_rad.cache[(('deg',90),)] - 3.14159/2) < 0.0001
-        h = deg_to_rad._hash((('deg',90),))
+        assert abs(deg_to_rad.cache[(('deg', 90),)] - 3.14159/2) < 0.0001
+        h = deg_to_rad._hash((('deg', 90),))
         meta = deg_to_rad.cache._get_db(h)['metadata']
         assert meta.startswith('Result cached at 20')
         assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
