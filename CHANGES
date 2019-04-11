@@ -1,5 +1,8 @@
 This file describes changes to pypersist since the initial release.
 
+0.8 (2019-04-11)
+  - Fix a problem with dependencies
+
 0.7 (2019-04-11)
   - Add support for persistent class methods
   - Test suite for Sage
