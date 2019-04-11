@@ -36,7 +36,7 @@ memo_schema = {
 }
 
 persist = {
-    'url': 'persist/<regex("[\w]+"):funcname>',
+    'url': 'persist/<regex("[\\w]+"):funcname>',
 
     # by default the standard item entry point is defined as
     # '/people/<ObjectId>'. We leave it untouched, and we also enable an
