@@ -8,7 +8,7 @@ def read(fname):
 
 
 setup(name='pypersist',
-      version=read("VERSION"),
+      version=read('VERSION'),
       description='Persistent memoisation framework for Python',
       url='https://github.com/mtorpey/pypersist',
       author='Michael Torpey',
@@ -21,7 +21,7 @@ setup(name='pypersist',
       ],
       license='GPL',
       packages=['pypersist'],
-      install_requires=['requests'],
+      install_requires=read('requirements.txt').split('\n'),
       include_package_data=True,
       long_description=read('README.md'),
       zip_safe=False)

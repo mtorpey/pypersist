@@ -1,0 +1,23 @@
+This file describes changes to pypersist since the initial release.
+
+0.7 (2019-04-11)
+  - Add support for persistent class methods
+  - Test suite for Sage
+
+0.6 (2019-02-28)
+  - Support for Sage-specific objects
+  - Ability to include metadata
+
+0.5 (2019-02-14)
+  - Backwards compatibility for Python 2.7
+  - Tests for MongoDB caches
+
+0.4 (2019-02-06)
+  - Include documentation in PyPI archive
+
+0.3 (2019-02-05)
+  - Setup automatic documentation with Sphinx
+  - Add module-level docstrings
+
+0.2 (2019-01-29)
+  - Initial release (after a hiccup with PyPI)
