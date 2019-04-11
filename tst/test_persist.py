@@ -223,3 +223,30 @@ def test_metadata():
     assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
     deg_to_rad.clear()
     assert not exists(fname)
+
+def test_methods():
+    class A:
+        def __init__(self, x=3):
+            self.x = x
+
+        @persist(key=lambda self, a: (self.x, a))
+        def this_plus_number(self, a=5):
+            return self.x + a
+
+    A.this_plus_number.clear()
+
+    a = A(5)
+    b = A()
+    c = A(3)  # same as b
+    assert len(a.this_plus_number.cache) == 0
+    assert a.this_plus_number(10) == 15
+    assert a.this_plus_number(10) == 15
+    assert b.this_plus_number(4) == 7
+    assert b.this_plus_number(4) == 7
+    assert a.this_plus_number.cache[(5,10)] == 15
+    assert A.this_plus_number.cache[(5,10)] == 15
+    assert len(A.this_plus_number.cache) == 2
+    assert len(a.this_plus_number.cache) == 2
+    assert len(b.this_plus_number.cache) == 2
+    assert c.this_plus_number(4) == 7
+    assert len(b.this_plus_number.cache) == 2

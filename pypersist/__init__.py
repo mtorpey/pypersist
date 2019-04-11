@@ -25,6 +25,10 @@ def persist(func=None,
     Or to customise the way this memoisation is done, decorate with
     `@persist(<args>)` and specify custom parameters.
 
+    You can even use this decorator for methods in a class.  However, since it
+    may be difficult to pickle a class instance, you may wish to specify a
+    custom `key` function.
+
     Parameters
     ----------
     cache : str, optional
@@ -117,16 +121,35 @@ def persist(func=None,
     16
     >>> power(10,3)
     1000
-    >>> power.cache[(2,4)]
+    >>> power.cache[(2, 4)]
     16
+
+    Persistence of a method inside a class.  We specify a key function that
+    characterises the relevant parts of the `A` object, since it can be
+    difficult to pickle class instances:
+
+    >>> class A:
+    ...     def __init__(self, x):
+    ...         self.x = x
+    ...     @persist(key=lambda self, a: (self.x, a))
+    ...     def this_plus_number(self, a):
+    ...         return self.x + a
+    >>> a = A(5)
+    >>> a.this_plus_number(10)
+    15
+    >>> a.this_plus_number.cache[(5, 10)]
+    15
+    >>> A.this_plus_number.cache[(5, 10)]
+    15
 
     """
 
-    class persist_wrapper:
+    class persist_wrapper(object):
 
-        def __init__(self, func):
+        def __init__(self, func, instance=None):
             update_wrapper(self, func)
             self._func = func
+            self._instance = instance  # supplied iff this is a bound method
             self._hash = hash
             self._unhash = unhash
             self._pickle = pickle
@@ -164,13 +187,67 @@ def persist(func=None,
             self.cache = constr(self, path)
 
         def __call__(self, *args, **kwargs):
+            # Handle "self" argument if this is a class method
+            if self._instance is not None:
+                args = (self._instance,) + args
             key = self._key(*args, **kwargs)
+
+            # Retrieve or calculate result
             try:
                 val = self.cache[key]
             except KeyError:
                 val = self._func(*args, **kwargs)
                 self.cache[key] = val
             return val
+
+        def __get__(self, instance, cls):
+            """Bind this object to an instance of a class, as a method
+
+            If `func` was defined as a method of a class, then `__get__` will be
+            called by Python when an instance of that class calls the method for
+            the first time.  We create a new `persist_wrapper` object in exactly
+            the same way this one was created, but supplying an `instance`
+            argument, which is the class instance to which this method should be
+            bound.
+
+            We replace the instance's method (this wrapper) with the new
+            wrapper, and then return it.  In this way, we ensure that this
+            `__get__` function is only called once per instance.  The `__get__`
+            function of the new wrapper should never be called.
+
+            If `func` was not defined as a method of a class, this will probably
+            never be called.  But if it is, then the present wrapper is returned
+            unchanged.
+
+            Parameters
+            ----------
+            self : persist_wrapper
+                This wrapper, i.e. the memoised method that is being called.  It
+                should not yet have been called with the instance to which it is
+                now bound.
+            instance : cls
+                An instance of the class in which this function was defined as a
+                method.  This instance is currently trying to use the method for
+                the first time, and so requires a version of the method that is
+                bound to it.
+            cls : class
+                The class in which this function was defined as a method.
+                `instance` is an instance of this class.
+
+            Returns
+            -------
+            persist_wrapper
+                A new wrapper for the same function as `self`, but bound to the
+                instance.  If the instance is `None` (unlikely) then `self` is
+                returned.
+
+            """
+
+            if instance is None:
+                return self
+            bound_method_wrapper = persist_wrapper(self._func, instance)
+            setattr(instance, self._func.__name__, bound_method_wrapper)
+            return bound_method_wrapper
 
         def default_key(self, *args, **kwargs):
             return preprocessing.arg_tuple(self._func, *args, **kwargs)
