@@ -23,18 +23,18 @@ def test_triple():
     assert triple(3) == 9
     assert len(triple.cache) == 1
     assert triple.cache
-    assert triple.cache[(('x', 3),)] == 9
-    triple.cache[(('x', 10),)] = 31
+    assert triple.cache[(("x", 3),)] == 9
+    triple.cache[(("x", 10),)] = 31
     assert triple(10) == 31
     with pytest.raises(KeyError) as ke:
-        print(triple.cache[(('x', 5),)])
-    assert ke.value.args[0] == (('x', 5),)
+        print(triple.cache[(("x", 5),)])
+    assert ke.value.args[0] == (("x", 5),)
     assert len(triple.cache) == 2
-    del triple.cache[(('x', 3),)]
+    del triple.cache[(("x", 3),)]
     assert len(triple.cache) == 1
     with pytest.raises(KeyError) as ke:
-        del triple.cache[(('x', 5),)]
-    assert ke.value.args[0] == (('x', 5),)
+        del triple.cache[(("x", 5),)]
+    assert ke.value.args[0] == (("x", 5),)
 
 
 def test_pickle():
@@ -49,15 +49,15 @@ def test_pickle():
     assert double(x=2) == 4
     assert len(double.cache) == 1
     assert double(0) == 0
-    assert double('hello!') == 'hello!hello!'
+    assert double("hello!") == "hello!hello!"
     assert len(double.cache) == 3
 
-    files = listdir('persist/double')
-    results = [open('persist/double/' + fname).read() for fname in files]
-    assert '4' in results
-    assert '0' in results
+    files = listdir("persist/double")
+    results = [open("persist/double/" + fname).read() for fname in files]
+    assert "4" in results
+    assert "0" in results
     assert "'hello!hello!'" in results
-    assert 'some random string' not in results
+    assert "some random string" not in results
 
 
 def test_unpicklable():
@@ -78,7 +78,7 @@ def test_locations():
         # keyword-only argument a
         from py3_only_funcs import foo
     else:
-        @persist(cache='file://results_for_alice/', funcname='foofighters')
+        @persist(cache="file://results_for_alice/", funcname="foofighters")
         def foo(x, y, z=1, a=3):
             return x + y + z + a
     foo.clear()
@@ -92,11 +92,11 @@ def test_locations():
     assert foo(1, 4, a=3, z=1) == 9  # Default arg z that is not keyword-only
     assert len(foo.cache) == 3
 
-    assert len(listdir(join('results_for_alice', 'foofighters'))) >= 2
+    assert len(listdir(join("results_for_alice", "foofighters"))) >= 2
 
 
 def test_key():
-    @persist(cache='results_for_alice', key=lambda *args: sorted(args))
+    @persist(cache="results_for_alice", key=lambda *args: sorted(args))
     def sum(*args):
         acc = 0
         for x in args:
@@ -115,7 +115,7 @@ def test_key():
 
 
 def test_hash():
-    @persist(hash=lambda k: '%s to the %s' % (k[0][1], k[1][1]),
+    @persist(hash=lambda k: "%s to the %s" % (k[0][1], k[1][1]),
              pickle=str,
              unpickle=int)
     def pow(x, y):
@@ -129,15 +129,15 @@ def test_hash():
     assert pow(0, 0) == 1
     assert pow(2, 16) == 65536
 
-    fnames = listdir('persist/pow')
-    assert sorted(fnames) == ['0 to the 0.out',
-                              '1 to the 3.out',
-                              '10 to the 5.out',
-                              '2 to the 16.out',
-                              '2 to the 3.out',
-                              '7 to the 4.out']
-    assert open('persist/pow/7 to the 4.out', 'r').read() == '2401'
-    assert open('persist/pow/0 to the 0.out', 'r').read() == '1'
+    fnames = listdir("persist/pow")
+    assert sorted(fnames) == ["0 to the 0.out",
+                              "1 to the 3.out",
+                              "10 to the 5.out",
+                              "2 to the 16.out",
+                              "2 to the 3.out",
+                              "7 to the 4.out"]
+    assert open("persist/pow/7 to the 4.out", "r").read() == "2401"
+    assert open("persist/pow/0 to the 0.out", "r").read() == "1"
 
 
 def test_storekey():
@@ -151,26 +151,26 @@ def test_storekey():
     assert square(8) == 64
 
     keys = [key for key in square.cache]
-    assert sorted(keys) == [(('x', 0),), (('x', 8),), (('x', 12),)]
+    assert sorted(keys) == [(("x", 0),), (("x", 8),), (("x", 12),)]
     keys = [key for key in square.cache.keys()]
-    assert sorted(keys) == [(('x', 0),), (('x', 8),), (('x', 12),)]
+    assert sorted(keys) == [(("x", 0),), (("x", 8),), (("x", 12),)]
     values = [key for key in square.cache.values()]
     assert sorted(values) == [0, 64, 144]
     items = [key for key in square.cache.items()]
-    assert sorted(items) == [((('x', 0),), 0),
-                             ((('x', 8),), 64),
-                             ((('x', 12),), 144)]
+    assert sorted(items) == [((("x", 0),), 0),
+                             ((("x", 8),), 64),
+                             ((("x", 12),), 144)]
 
 
 def test_hash_collision():
-    @persist(hash=lambda k: 'hello world')
+    @persist(hash=lambda k: "hello world")
     def square(x):
         return x*x
     square.clear()
     assert square(3) == 9
     assert square(4) == 9
 
-    @persist(hash=lambda k: 'hello world', storekey=True)
+    @persist(hash=lambda k: "hello world", storekey=True)
     def square(x):
         return x*x
     square.clear()
@@ -182,7 +182,7 @@ def test_hash_collision():
 
 def test_unhash():
     @persist(key=float,
-             hash=lambda k: 'e to the ' + str(k),
+             hash=lambda k: "e to the " + str(k),
              unhash=lambda s: float(s[9:]))
     def exp(x):
         return 2.71828 ** x
@@ -195,18 +195,18 @@ def test_unhash():
     assert len(exp.cache) == 3
     keys = [key for key in exp.cache]
     assert sorted(keys) == [-1, 2.0, 3.14]
-    strings = ['e to the ' + str(item[0]) + ' equals ' + str(item[1])
+    strings = ["e to the " + str(item[0]) + " equals " + str(item[1])
                for item in exp.cache.items()]
     assert [s[:30] for s in sorted(strings)] == [
-        'e to the -1.0 equals 0.3678796',
-        'e to the 2.0 equals 7.38904615',
-        'e to the 3.14 equals 23.103818'
+        "e to the -1.0 equals 0.3678796",
+        "e to the 2.0 equals 7.38904615",
+        "e to the 3.14 equals 23.103818"
     ]
 
 
 def test_unhash_collision():
     @persist(key=lambda x: x,
-             hash=lambda k: '16',  # same as hash=str for x==16 only
+             hash=lambda k: "16",  # same as hash=str for x==16 only
              unhash=int)
     def square(x):
         return x*x
@@ -227,11 +227,11 @@ def test_metadata():
     deg_to_rad.clear()
 
     assert abs(deg_to_rad(90) - 3.14159/2) < 0.0001
-    fname = 'persist/deg_to_rad/90.meta'
+    fname = "persist/deg_to_rad/90.meta"
     assert exists(fname)
-    meta = open(fname, 'r').read()
-    assert meta.startswith('Result cached at 20')
-    assert len(meta) == len('Result cached at 2019-02-28 14:16:19.887012')
+    meta = open(fname, "r").read()
+    assert meta.startswith("Result cached at 20")
+    assert len(meta) == len("Result cached at 2019-02-28 14:16:19.887012")
     deg_to_rad.clear()
     assert not exists(fname)
 

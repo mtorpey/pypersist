@@ -7,7 +7,7 @@ from functools import update_wrapper
 
 
 def persist(func=None,
-            cache='file://persist/',
+            cache="file://persist/",
             funcname=None,
             key=None,
             storekey=False,
@@ -33,14 +33,14 @@ def persist(func=None,
     ----------
     cache : str, optional
         The address of the cache in which the outputs of this function should
-        be stored.  If it starts with 'file://', then the remainder of the
+        be stored.  If it starts with "file://", then the remainder of the
         string should be a path to the directory on the local file system in
         which the results will be stored; this may be a relative path, and the
         directory will be created if it does not exist.  If it starts with
-        'mongodb://' then the remainder of the string should be the URL of the
+        "mongodb://" then the remainder of the string should be the URL of the
         pypersist MongoDB server in which the results will be stored.  If it
-        does not contain '://' then 'file://' will be added at the beginning.
-        Default is 'file://persist'.
+        does not contain "://" then "file://" will be added at the beginning.
+        Default is "file://persist".
     funcname : str, optional
         A string that uniquely describes this function.  If the same `cache` is
         used for several memoised functions, they should all have different
@@ -105,14 +105,14 @@ def persist(func=None,
     6
     >>> double(3)
     6
-    >>> double.cache[(('x', 3),)]
+    >>> double.cache[(("x", 3),)]
     6
 
     Custom persistence using a simpler key, a descriptive filename, and writing
     human-readable files:
 
     >>> @persist(key=lambda x,y: (x,y),
-    ...          hash=lambda k: '%s_to_the_power_of_%s' % k,
+    ...          hash=lambda k: "%s_to_the_power_of_%s" % k,
     ...          pickle=str,
     ...          unpickle=int)
     ... def power(x, y):
@@ -167,16 +167,16 @@ def persist(func=None,
 
             # Determine which backend to use
             try:
-                pos = cache.index('://')
+                pos = cache.index("://")
                 typestring = cache[:pos]
-                path = cache[pos+len('://'):]
+                path = cache[pos+len("://"):]
             except ValueError:
                 # No backend specified: use disk
-                typestring = 'file'
+                typestring = "file"
                 path = cache
 
-            cachetypes = {'file': diskcache,
-                          'mongodb': mongodbcache}
+            cachetypes = {"file": diskcache,
+                          "mongodb": mongodbcache}
             cachetype = cachetypes[typestring]
 
             if storekey or unhash:

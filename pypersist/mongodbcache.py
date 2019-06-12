@@ -1,7 +1,7 @@
 """Persistent memoisation backend that saves results on a MongoDB REST server
 
 The `persist` decorator takes a `cache` argument, which details what sort of
-backend to use for the cache.  If this string begins with 'mongodb://', then a
+backend to use for the cache.  If this string begins with "mongodb://", then a
 *MongoDB cache* is used, which saves computed results to a MongoDB database via
 a REST API.  This internal work is done by the classes defined below.
 
@@ -50,11 +50,11 @@ class Cache:
         self._func = func
 
         # Use http if not specified
-        if url.find('://') == -1:
-            url = 'http://' + url
+        if url.find("://") == -1:
+            url = "http://" + url
         self._url = join(url, self._func._funcname)
-        self._headers = {'Content-type': 'application/json',
-                         'Accept': 'text/plain'}
+        self._headers = {"Content-type": "application/json",
+                         "Accept": "text/plain"}
 
     def __getitem__(self, key):
         # Get hash and check it
@@ -70,12 +70,12 @@ class Cache:
             # Stored value found
             if self._func._storekey:
                 # Check key
-                keystring = db_item['key']
+                keystring = db_item["key"]
                 storedkey = self._func._unpickle(keystring)
                 if storedkey != key:
                     raise HashCollisionError(storedkey, key)
             # Use stored value
-            val = self._func._unpickle(db_item['result'])
+            val = self._func._unpickle(db_item["result"])
         else:
             # No value stored
             raise KeyError(key)
@@ -84,14 +84,14 @@ class Cache:
 
     def __setitem__(self, key, val):
         h = self._func._hash(key)
-        new_item = {'funcname': self._func._funcname,
-                    'hash': h,
-                    'namespace': 'pypersist',
-                    'result': self._func._pickle(val)}
+        new_item = {"funcname": self._func._funcname,
+                    "hash": h,
+                    "namespace": "pypersist",
+                    "result": self._func._pickle(val)}
         if self._func._storekey:
-            new_item['key'] = self._func._pickle(key)
+            new_item["key"] = self._func._pickle(key)
         if self._func._metadata:
-            new_item['metadata'] = self._func._metadata()
+            new_item["metadata"] = self._func._metadata()
 
         r = requests.post(url=self._url,
                           headers=self._headers,
@@ -106,16 +106,16 @@ class Cache:
             raise KeyError(key)
 
         # Delete the item using its _id and _etag
-        url = self._url + '/' + db_item['_id']
+        url = self._url + "/" + db_item["_id"]
         headers = dict(self._headers)
-        headers['If-Match'] = db_item['_etag']
+        headers["If-Match"] = db_item["_etag"]
         r = requests.delete(url=url, headers=headers)
         r.raise_for_status()
 
     def __len__(self):
         db_items = self._get_db()
         if db_items:
-            return db_items['_meta']['total']
+            return db_items["_meta"]["total"]
         else:
             return 0
 
@@ -139,16 +139,16 @@ class Cache:
         Returns
         -------
         dict or None
-          If a hash is specified, a single database item with entries '_id',
-          '_etag', 'funcname', 'hash', 'result' and so on.  If no hash is
-          specified, a list of all such items in the database in the '_items'
-          entry, along with metadata in the '_meta' entry.
+          If a hash is specified, a single database item with entries "_id",
+          "_etag", "funcname", "hash", "result" and so on.  If no hash is
+          specified, a list of all such items in the database in the "_items"
+          entry, along with metadata in the "_meta" entry.
           If no appropriate item exists in the database, None.
 
         """
         url = self._url
         if hash:
-            url += '/' + hash
+            url += "/" + hash
         r = requests.get(url=url)
         if r.status_code == 200:
             # Stored values found
@@ -183,7 +183,7 @@ class CacheWithKeys(Cache, MutableMapping):
             assert(cache._func._storekey or cache._func._unhash)
             db_items = self._cache._get_db()
             if db_items:
-                self._items = db_items['_items']
+                self._items = db_items["_items"]
             else:
                 self._items = []
             self._pos = 0
@@ -194,10 +194,10 @@ class CacheWithKeys(Cache, MutableMapping):
             item = self._items[self._pos]
             self._pos += 1
             if self._cache._func._storekey:
-                key = self._cache._func._unpickle(item['key'])
+                key = self._cache._func._unpickle(item["key"])
             else:
                 assert(self._cache._func._unhash)
-                key = self._cache._func._unhash(item['hash'])
+                key = self._cache._func._unhash(item["hash"])
             return key
 
         next = __next__  # for Python 2 compatibility

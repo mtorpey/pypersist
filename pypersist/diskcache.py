@@ -1,7 +1,7 @@
 """Persistent memoisation backend that saves results in the local file system
 
 The `persist` decorator takes a `cache` argument, which details what sort of
-backend to use for the cache.  If this string begins with 'file://', or if no
+backend to use for the cache.  If this string begins with "file://", or if no
 `cache` is specified, then a *disk cache* is used, which saves computed results
 to a directory in the local file system.  This internal work is done by the
 classes defined below.
@@ -58,13 +58,13 @@ class Cache:
             if self._func._storekey:
                 keyfname = self._key_to_fname(key, KEY)
                 assert(exists(fname))
-                keyfile = open(keyfname, 'r')
+                keyfile = open(keyfname, "r")
                 keystring = keyfile.read()
                 keyfile.close()
                 storedkey = self._func._unpickle(keystring)
                 if storedkey != key:
                     raise HashCollisionError(storedkey, key)
-            file = open(fname, 'r')
+            file = open(fname, "r")
             val = self._func._unpickle(file.read())
             file.close()
         else:
@@ -74,16 +74,16 @@ class Cache:
     def __setitem__(self, key, val):
         if self._func._storekey:
             keyfname = self._key_to_fname(key, KEY)
-            keyfile = open(keyfname, 'w')
+            keyfile = open(keyfname, "w")
             keyfile.write(self._func._pickle(key))
             keyfile.close()
         if self._func._metadata:
             metafname = self._key_to_fname(key, META)
-            metafile = open(metafname, 'w')
+            metafile = open(metafname, "w")
             metafile.write(self._func._metadata())
             metafile.close()
         fname = self._key_to_fname(key, OUT)
-        file = open(fname, 'w')
+        file = open(fname, "w")
         file.write(self._func._pickle(val))
         file.close()
 
@@ -96,7 +96,7 @@ class Cache:
                 raise KeyError(key)
 
     def __len__(self):
-        # Number of files ending with '.out'
+        # Number of files ending with ".out"
         return sum(fname.endswith(OUT) for fname in listdir(self._dir))
 
     def clear(self):
@@ -112,8 +112,8 @@ class Cache:
 
     def _fname_to_key(self, fname):
         if fname.startswith(self._dir):
-            fname = fname[len(self._dir + '/'):]  # remove directory
-        h = fname[:fname.rfind('.')]  # remove extension
+            fname = fname[len(self._dir + "/"):]  # remove directory
+        h = fname[:fname.rfind(".")]  # remove extension
         return self._func._unhash(h)
 
 
@@ -151,7 +151,7 @@ class CacheWithKeys(Cache, MutableMapping):
                 # Read key from file
                 path = join(self._cache._dir, fname)
                 path = path[:-len(OUT)] + KEY
-                file = open(path, 'r')
+                file = open(path, "r")
                 string = file.read()
                 key = self._cache._func._unpickle(string)
                 file.close()
@@ -162,6 +162,6 @@ class CacheWithKeys(Cache, MutableMapping):
 
 
 # Filename extensions
-OUT = '.out'
-KEY = '.key'
-META = '.meta'
+OUT = ".out"
+KEY = ".key"
+META = ".meta"

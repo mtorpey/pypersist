@@ -1,7 +1,7 @@
 from pypersist import persist
 
 
-@persist(cache='file://results_for_alice/', funcname='foofighters')
+@persist(cache="file://results_for_alice/", funcname="foofighters")
 def foo(x, y, z=1, *, a=3):
     return x + y + z + a
 

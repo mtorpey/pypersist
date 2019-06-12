@@ -3,7 +3,7 @@
 from pickle import dumps, loads
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from sys import modules
-CHAR_ENCODING = 'utf-8'
+CHAR_ENCODING = "utf-8"
 
 
 def pickle(obj):
@@ -16,9 +16,9 @@ def pickle(obj):
 
     Examples
     --------
-    >>> pickle('Hello world')
+    >>> pickle("Hello world")
     'gANYCwAAAEhlbGxvIHdvcmxkcQAu'
-    >>> unpickle('gANYCwAAAEhlbGxvIHdvcmxkcQAu')
+    >>> unpickle("gANYCwAAAEhlbGxvIHdvcmxkcQAu")
     'Hello world'
 
     """
@@ -37,9 +37,9 @@ def unpickle(string):
 
     Examples
     --------
-    >>> pickle('Hello world')
+    >>> pickle("Hello world")
     'gANYCwAAAEhlbGxvIHdvcmxkcQAu'
-    >>> unpickle('gANYCwAAAEhlbGxvIHdvcmxkcQAu')
+    >>> unpickle("gANYCwAAAEhlbGxvIHdvcmxkcQAu")
     'Hello world'
 
     """
@@ -63,7 +63,7 @@ def pickle_to_bytes(obj):
     try:
         b = dumps(obj)  # Pickle the key to a bytes object
     except Exception as e:  # Should be a PickleError, but doesn't seem to be
-        if 'sage.misc.persist' in modules:  # Use Sage pickling if necessary
+        if "sage.misc.persist" in modules:  # Use Sage pickling if necessary
             import sage.misc.persist
             b = sage.misc.persist.dumps(obj)
         else:
@@ -85,7 +85,7 @@ def unpickle_from_bytes(obj):
     try:
         b = loads(obj)  # Pickle the key to a bytes object
     except Exception as e:  # Should be a PickleError, but doesn't seem to be
-        if 'sage.misc.persist' in modules:  # Use Sage unpickling if necessary
+        if "sage.misc.persist" in modules:  # Use Sage unpickling if necessary
             import sage.misc.persist
             b = sage.misc.persist.loads(obj)
         else:

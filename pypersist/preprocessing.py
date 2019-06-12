@@ -46,9 +46,9 @@ def arg_tuple(func, *args, **kwargs):
     --------
     Tuple of arguments to built-in function `len`:
 
-    >>> len('hello world')
+    >>> len("hello world")
     11
-    >>> arg_tuple(len, 'hello world')
+    >>> arg_tuple(len, "hello world")
     (('obj', 'hello world'),)
 
     Tuple of arguments to user-defined function, with default argument being
@@ -71,7 +71,7 @@ def arg_tuple(func, *args, **kwargs):
         if spec.varargs is None:
             func(*args, **kwargs)  # throws TypeError with useful message
         else:
-            kwargs['*' + spec.varargs] = args[len(spec.args):]  # add varargs
+            kwargs["*" + spec.varargs] = args[len(spec.args):]  # add varargs
 
     # Convert args to kwargs
     kwargs.update(dict(zip(spec.args, args)))
@@ -81,7 +81,7 @@ def arg_tuple(func, *args, **kwargs):
         for (arg, val) in zip(spec.args[-len(spec.defaults):], spec.defaults):
             if kwargs.get(arg) == val:
                 kwargs.pop(arg)
-    if hasattr(spec, 'kwonlydefaults') and spec.kwonlydefaults is not None:
+    if hasattr(spec, "kwonlydefaults") and spec.kwonlydefaults is not None:
         for arg in spec.kwonlydefaults:
             if kwargs.get(arg) == spec.kwonlydefaults[arg]:
                 kwargs.pop(arg)
