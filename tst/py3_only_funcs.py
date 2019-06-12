@@ -7,4 +7,4 @@ def foo(x, y, z=1, *, a=3):
 
 
 def baz(a, b, c=3, d=4, *, e, f=6, g=7):
-    return a+b+c+d+e+f+g
+    return a + b + c + d + e + f + g

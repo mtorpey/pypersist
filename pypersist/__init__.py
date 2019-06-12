@@ -6,16 +6,18 @@ from . import mongodbcache
 from functools import update_wrapper
 
 
-def persist(func=None,
-            cache="file://persist/",
-            funcname=None,
-            key=None,
-            storekey=False,
-            pickle=pickling.pickle,
-            unpickle=pickling.unpickle,
-            hash=hashing.hash,
-            unhash=None,
-            metadata=None):
+def persist(
+    func=None,
+    cache="file://persist/",
+    funcname=None,
+    key=None,
+    storekey=False,
+    pickle=pickling.pickle,
+    unpickle=pickling.unpickle,
+    hash=hashing.hash,
+    unhash=None,
+    metadata=None,
+):
     """Function decorator for persistent memoisation
 
     Store the output of a function permanently, and use previously stored
@@ -145,7 +147,6 @@ def persist(func=None,
     """
 
     class persist_wrapper(object):
-
         def __init__(self, func, instance=None):
             update_wrapper(self, func)
             self._func = func
@@ -169,14 +170,13 @@ def persist(func=None,
             try:
                 pos = cache.index("://")
                 typestring = cache[:pos]
-                path = cache[pos+len("://"):]
+                path = cache[pos + len("://") :]
             except ValueError:
                 # No backend specified: use disk
                 typestring = "file"
                 path = cache
 
-            cachetypes = {"file": diskcache,
-                          "mongodb": mongodbcache}
+            cachetypes = {"file": diskcache, "mongodb": mongodbcache}
             cachetype = cachetypes[typestring]
 
             if storekey or unhash:

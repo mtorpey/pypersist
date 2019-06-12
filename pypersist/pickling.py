@@ -3,6 +3,7 @@
 from pickle import dumps, loads
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from sys import modules
+
 CHAR_ENCODING = "utf-8"
 
 
@@ -65,6 +66,7 @@ def pickle_to_bytes(obj):
     except Exception as e:  # Should be a PickleError, but doesn't seem to be
         if "sage.misc.persist" in modules:  # Use Sage pickling if necessary
             import sage.misc.persist
+
             b = sage.misc.persist.dumps(obj)
         else:
             raise e  # Still can't pickle - raise error
@@ -87,6 +89,7 @@ def unpickle_from_bytes(obj):
     except Exception as e:  # Should be a PickleError, but doesn't seem to be
         if "sage.misc.persist" in modules:  # Use Sage unpickling if necessary
             import sage.misc.persist
+
             b = sage.misc.persist.loads(obj)
         else:
             raise e  # Still can't pickle - raise error

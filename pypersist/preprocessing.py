@@ -11,6 +11,7 @@ produces this normalised tuple.
 """
 
 from sys import version_info
+
 PYTHON_VERSION = version_info[0]  # major version number
 
 if PYTHON_VERSION >= 3:
@@ -71,14 +72,14 @@ def arg_tuple(func, *args, **kwargs):
         if spec.varargs is None:
             func(*args, **kwargs)  # throws TypeError with useful message
         else:
-            kwargs["*" + spec.varargs] = args[len(spec.args):]  # add varargs
+            kwargs["*" + spec.varargs] = args[len(spec.args) :]  # add varargs
 
     # Convert args to kwargs
     kwargs.update(dict(zip(spec.args, args)))
 
     # Remove any default arguments
     if spec.defaults is not None:
-        for (arg, val) in zip(spec.args[-len(spec.defaults):], spec.defaults):
+        for (arg, val) in zip(spec.args[-len(spec.defaults) :], spec.defaults):
             if kwargs.get(arg) == val:
                 kwargs.pop(arg)
     if hasattr(spec, "kwonlydefaults") and spec.kwonlydefaults is not None:

@@ -57,7 +57,7 @@ class Cache:
         if exists(fname):
             if self._func._storekey:
                 keyfname = self._key_to_fname(key, KEY)
-                assert(exists(fname))
+                assert exists(fname)
                 keyfile = open(keyfname, "r")
                 keystring = keyfile.read()
                 keyfile.close()
@@ -112,8 +112,8 @@ class Cache:
 
     def _fname_to_key(self, fname):
         if fname.startswith(self._dir):
-            fname = fname[len(self._dir + "/"):]  # remove directory
-        h = fname[:fname.rfind(".")]  # remove extension
+            fname = fname[len(self._dir + "/") :]  # remove directory
+        h = fname[: fname.rfind(".")]  # remove extension
         return self._func._unhash(h)
 
 
@@ -132,12 +132,15 @@ class CacheWithKeys(Cache, MutableMapping):
 
     class KeysIter(Iterator):
         """Iterator class for the keys of a `CacheWithKeys` object"""
+
         def __init__(self, cache):
             self._cache = cache
             self._pos = 0
-            self._files = [fname
-                           for fname in listdir(self._cache._dir)
-                           if fname.endswith(OUT)]
+            self._files = [
+                fname
+                for fname in listdir(self._cache._dir)
+                if fname.endswith(OUT)
+            ]
 
         def __next__(self):
             if self._pos >= len(self._files):
@@ -147,10 +150,10 @@ class CacheWithKeys(Cache, MutableMapping):
                 # Unhash from filename
                 key = self._cache._fname_to_key(fname)
             else:
-                assert(self._cache._func._storekey)
+                assert self._cache._func._storekey
                 # Read key from file
                 path = join(self._cache._dir, fname)
-                path = path[:-len(OUT)] + KEY
+                path = path[: -len(OUT)] + KEY
                 file = open(path, "r")
                 string = file.read()
                 key = self._cache._func._unpickle(string)

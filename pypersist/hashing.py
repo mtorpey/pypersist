@@ -3,6 +3,7 @@
 from . import pickling
 from hashlib import sha256
 from base64 import urlsafe_b64encode
+
 CHAR_ENCODING = "utf-8"
 
 

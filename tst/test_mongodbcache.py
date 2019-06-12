@@ -15,9 +15,11 @@ def test_mongo():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
+
         @persist(cache="mongodb://http://127.0.0.1:5000/persist")
         def triple(x):
             return 3 * x
+
         triple.clear()
 
         assert len(triple.cache) == 0
@@ -38,6 +40,7 @@ def test_mongo():
         with pytest.raises(KeyError) as ke:
             del triple.cache[(("x", 5),)]
         assert ke.value.args[0] == (("x", 5),)
+
     finally:
         mongo_process.kill()
 
@@ -46,12 +49,16 @@ def test_hash():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(hash=lambda k: "%s to the %s" % (k[0][1], k[1][1]),
-                 pickle=str,
-                 unpickle=int,
-                 cache="mongodb://127.0.0.1:5000/persist")
+
+        @persist(
+            hash=lambda k: "%s to the %s" % (k[0][1], k[1][1]),
+            pickle=str,
+            unpickle=int,
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def pow(x, y):
-            return x**y
+            return x ** y
+
         pow.clear()
 
         assert pow(2, 3) == 8
@@ -64,6 +71,7 @@ def test_hash():
         assert pow(0, 0) == 1
 
         assert len(pow.cache) == 6
+
     finally:
         mongo_process.kill()
 
@@ -72,18 +80,20 @@ def test_storekey():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(storekey=True,
-                 cache="mongodb://127.0.0.1:5000/persist")
-        def never_call_this(x):  # a function that is never called,
-            return x             # so the database has never heard of it
+
+        # This function is never called, so the database has never heard of it
+        @persist(storekey=True, cache="mongodb://127.0.0.1:5000/persist")
+        def never_call_this(x):
+            return x
+
         assert len(never_call_this.cache) == 0
         keys = [key for key in never_call_this.cache]
         assert len(keys) == 0
 
-        @persist(storekey=True,
-                 cache="mongodb://127.0.0.1:5000/persist")
+        @persist(storekey=True, cache="mongodb://127.0.0.1:5000/persist")
         def square(x):
-            return x*x
+            return x * x
+
         square.clear()
 
         items = [key for key in square.cache.items()]
@@ -100,9 +110,12 @@ def test_storekey():
         values = [key for key in square.cache.values()]
         assert sorted(values) == [0, 64, 144]
         items = [key for key in square.cache.items()]
-        assert sorted(items) == [((("x", 0),), 0),
-                                 ((("x", 8),), 64),
-                                 ((("x", 12),), 144)]
+        assert sorted(items) == [
+            ((("x", 0),), 0),
+            ((("x", 8),), 64),
+            ((("x", 12),), 144),
+        ]
+
     finally:
         mongo_process.kill()
 
@@ -111,23 +124,32 @@ def test_hash_collision():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(hash=lambda k: "hello world",
-                 cache="mongodb://127.0.0.1:5000/persist")
+
+        @persist(
+            hash=lambda k: "hello world",
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def square(x):
-            return x*x
+            return x * x
+
         square.clear()
         assert square(3) == 9
         assert square(4) == 9
 
-        @persist(hash=lambda k: "hello world", storekey=True,
-                 cache="mongodb://127.0.0.1:5000/persist")
+        @persist(
+            hash=lambda k: "hello world",
+            storekey=True,
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def square(x):
-            return x*x
+            return x * x
+
         square.clear()
         assert square(3) == 9
         with pytest.raises(HashCollisionError) as hce:
             square(4)
         assert hce.value.args[0] != hce.value.args[1]
+
     finally:
         mongo_process.kill()
 
@@ -136,12 +158,16 @@ def test_unhash():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(key=float,
-                 hash=lambda k: "e to the " + str(k),
-                 unhash=lambda s: float(s[9:]),
-                 cache="mongodb://127.0.0.1:5000/persist")
+
+        @persist(
+            key=float,
+            hash=lambda k: "e to the " + str(k),
+            unhash=lambda s: float(s[9:]),
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def exp(x):
             return 2.71828 ** x
+
         exp.clear()
 
         exp(2)
@@ -151,13 +177,16 @@ def test_unhash():
         assert len(exp.cache) == 3
         keys = [key for key in exp.cache]
         assert sorted(keys) == [-1, 2.0, 3.14]
-        strings = ["e to the " + str(item[0]) + " equals " + str(item[1])
-                   for item in exp.cache.items()]
+        strings = [
+            "e to the " + str(item[0]) + " equals " + str(item[1])
+            for item in exp.cache.items()
+        ]
         assert [s[:30] for s in sorted(strings)] == [
             "e to the -1.0 equals 0.3678796",
             "e to the 2.0 equals 7.38904615",
-            "e to the 3.14 equals 23.103818"
+            "e to the 3.14 equals 23.103818",
         ]
+
     finally:
         mongo_process.kill()
 
@@ -166,12 +195,16 @@ def test_unhash_collision():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(key=lambda x: x,
-                 hash=lambda k: "16",  # same as hash=str for x==16 only
-                 unhash=int,
-                 cache="mongodb://127.0.0.1:5000/persist")
+
+        @persist(
+            key=lambda x: x,
+            hash=lambda k: "16",  # same as hash=str for x==16 only
+            unhash=int,
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def square(x):
-            return x*x
+            return x * x
+
         square.clear()
 
         assert square(16) == 256
@@ -179,6 +212,7 @@ def test_unhash_collision():
         with pytest.raises(HashCollisionError) as hce:
             square(12)
         assert hce.value.args == (16, 12)
+
     finally:
         mongo_process.kill()
 
@@ -198,23 +232,28 @@ def test_metadata():
     mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
     sleep(SLEEP_TIME)
     try:
-        @persist(metadata=lambda: "Result cached at " + str(datetime.now()),
-                 hash=lambda k: str(k[0][1]),
-                 storekey=True,
-                 cache="mongodb://127.0.0.1:5000/persist")
+
+        @persist(
+            metadata=lambda: "Result cached at " + str(datetime.now()),
+            hash=lambda k: str(k[0][1]),
+            storekey=True,
+            cache="mongodb://127.0.0.1:5000/persist",
+        )
         def deg_to_rad(deg):
             return deg * 3.1415926535 / 180
+
         deg_to_rad.clear()
 
-        assert abs(deg_to_rad(90) - 3.14159/2) < 0.0001
+        assert abs(deg_to_rad(90) - 3.14159 / 2) < 0.0001
         deg_to_rad(180)
         deg_to_rad(11)
         assert len(deg_to_rad.cache) == 3
 
-        assert abs(deg_to_rad.cache[(("deg", 90),)] - 3.14159/2) < 0.0001
+        assert abs(deg_to_rad.cache[(("deg", 90),)] - 3.14159 / 2) < 0.0001
         h = deg_to_rad._hash((("deg", 90),))
         meta = deg_to_rad.cache._get_db(h)["metadata"]
         assert meta.startswith("Result cached at 20")
         assert len(meta) == len("Result cached at 2019-02-28 14:16:19.887012")
+
     finally:
         mongo_process.kill()

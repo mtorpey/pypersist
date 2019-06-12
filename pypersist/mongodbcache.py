@@ -53,8 +53,10 @@ class Cache:
         if url.find("://") == -1:
             url = "http://" + url
         self._url = join(url, self._func._funcname)
-        self._headers = {"Content-type": "application/json",
-                         "Accept": "text/plain"}
+        self._headers = {
+            "Content-type": "application/json",
+            "Accept": "text/plain",
+        }
 
     def __getitem__(self, key):
         # Get hash and check it
@@ -84,18 +86,18 @@ class Cache:
 
     def __setitem__(self, key, val):
         h = self._func._hash(key)
-        new_item = {"funcname": self._func._funcname,
-                    "hash": h,
-                    "namespace": "pypersist",
-                    "result": self._func._pickle(val)}
+        new_item = {
+            "funcname": self._func._funcname,
+            "hash": h,
+            "namespace": "pypersist",
+            "result": self._func._pickle(val),
+        }
         if self._func._storekey:
             new_item["key"] = self._func._pickle(key)
         if self._func._metadata:
             new_item["metadata"] = self._func._metadata()
 
-        r = requests.post(url=self._url,
-                          headers=self._headers,
-                          json=new_item)
+        r = requests.post(url=self._url, headers=self._headers, json=new_item)
         r.raise_for_status()
 
     def __delitem__(self, key):
@@ -180,7 +182,7 @@ class CacheWithKeys(Cache, MutableMapping):
 
         def __init__(self, cache):
             self._cache = cache
-            assert(cache._func._storekey or cache._func._unhash)
+            assert cache._func._storekey or cache._func._unhash
             db_items = self._cache._get_db()
             if db_items:
                 self._items = db_items["_items"]
@@ -196,7 +198,7 @@ class CacheWithKeys(Cache, MutableMapping):
             if self._cache._func._storekey:
                 key = self._cache._func._unpickle(item["key"])
             else:
-                assert(self._cache._func._unhash)
+                assert self._cache._func._unhash
                 key = self._cache._func._unhash(item["hash"])
             return key
 

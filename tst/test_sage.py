@@ -12,6 +12,7 @@ from sys import modules
 
 try:
     from sage.all import *
+
     SAGE = True
 except ImportError:
     SAGE = False
@@ -26,6 +27,7 @@ def test_triple():
     @persist
     def triple(x):
         return 3 * x
+
     triple.clear()
 
     assert len(triple.cache) == 0
@@ -59,12 +61,12 @@ def test_identity():
     assert identity("string") == "string"
     assert identity(int(1)) == int(1)
     assert identity(1) == 1
-    assert identity(1/2) == 1/2
+    assert identity(1 / 2) == 1 / 2
 
     assert identity("string") == "string"
     assert identity(int(1)) == int(1)
     assert identity(1) == 1
-    assert identity(1/2) == 1/2
+    assert identity(1 / 2) == 1 / 2
 
     M = matrix(2)
     assert identity(M) == M
@@ -89,7 +91,7 @@ def test_fact():
         return factor(x)
 
     var("a")
-    p = (a**2-1)
+    p = a ** 2 - 1
     assert fact(p) == p.factor()
     assert fact(p) == p.factor()
     assert fact(8) == factor(8)
@@ -97,6 +99,6 @@ def test_fact():
 
     R = PolynomialRing(QQ, "t")
     t = R.gen()
-    q = t**2-1
+    q = t ** 2 - 1
     assert fact(q) == q.factor()
     assert fact(q) == q.factor()
