@@ -89,7 +89,7 @@ class Cache:
         new_item = {
             "funcname": self._func._funcname,
             "hash": h,
-            "namespace": "pypersist",
+            "namespace": "pypersist",  # TODO: make configurable
             "result": self._func._pickle(val),
         }
         if self._func._storekey:
