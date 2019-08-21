@@ -13,6 +13,7 @@ from .commoncache import HashCollisionError
 from collections import MutableMapping, Iterator
 from os import makedirs, remove, listdir
 from os.path import exists, join
+from time import sleep
 
 
 class Cache:
@@ -49,6 +50,9 @@ class Cache:
             makedirs(self._dir)
 
     def __getitem__(self, key):
+        lockfname = self._key_to_fname(key, LOCK)
+        while exists(lockfname):
+            sleep(0.1)  # wait before reading
         fname = self._key_to_fname(key, OUT)
         if self._func._unhash:
             storedkey = self._fname_to_key(fname)
@@ -72,6 +76,12 @@ class Cache:
         return val
 
     def __setitem__(self, key, val):
+        fname = self._key_to_fname(key, OUT)
+        lockfname = self._key_to_fname(key, LOCK)
+        if exists(lockfname) or exists(fname):
+            return  # another thread got here first - abort!
+        open(lockfname, "x")  # lock this result
+
         if self._func._storekey:
             keyfname = self._key_to_fname(key, KEY)
             keyfile = open(keyfname, "w")
@@ -82,12 +92,17 @@ class Cache:
             metafile = open(metafname, "w")
             metafile.write(self._func._metadata())
             metafile.close()
-        fname = self._key_to_fname(key, OUT)
+
         file = open(fname, "w")
         file.write(self._func._pickle(val))
         file.close()
 
+        remove(lockfname)  # unlock this result
+
     def __delitem__(self, key):
+        lockfname = self._key_to_fname(key, LOCK)
+        while exists(lockfname):
+            sleep(0.1)  # wait before reading
         for ext in [OUT, KEY, META]:
             fname = self._key_to_fname(key, ext)
             if exists(fname):
@@ -168,3 +183,4 @@ class CacheWithKeys(Cache, MutableMapping):
 OUT = ".out"
 KEY = ".key"
 META = ".meta"
+LOCK = ".lock"
