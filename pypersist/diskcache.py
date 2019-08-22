@@ -76,28 +76,40 @@ class Cache:
         return val
 
     def __setitem__(self, key, val):
-        fname = self._key_to_fname(key, OUT)
-        lockfname = self._key_to_fname(key, LOCK)
-        if exists(lockfname) or exists(fname):
-            return  # another thread got here first - abort!
-        open(lockfname, "x")  # lock this result
+        to_write = []  # list of (filename, string) pairs
 
+        # .out file
+        outfname = self._key_to_fname(key, OUT)
+        outstring = self._func._pickle(val)
+        to_write.append((outfname, outstring))
+
+        # .key file
         if self._func._storekey:
             keyfname = self._key_to_fname(key, KEY)
-            keyfile = open(keyfname, "w")
-            keyfile.write(self._func._pickle(key))
-            keyfile.close()
+            keystring = self._func._pickle(key)
+            to_write.append((keyfname, keystring))
+
+        # .meta file
         if self._func._metadata:
             metafname = self._key_to_fname(key, META)
-            metafile = open(metafname, "w")
-            metafile.write(self._func._metadata())
-            metafile.close()
+            metastring = self._func._metadata()
+            to_write.append((metafname, metastring))
 
-        file = open(fname, "w")
-        file.write(self._func._pickle(val))
-        file.close()
+        # get a lock on this result
+        lockfname = self._key_to_fname(key, LOCK)
+        if exists(lockfname) or exists(outfname):
+            return  # another thread got here first - abort!
+        open(lockfname, "w").close()
 
-        remove(lockfname)  # unlock this result
+        # do the file operations
+        print(to_write)
+        for (fname, string) in to_write:
+            file = open(fname, "w")
+            file.write(string)
+            file.close()
+
+        # unlock this result
+        remove(lockfname)
 
     def __delitem__(self, key):
         lockfname = self._key_to_fname(key, LOCK)

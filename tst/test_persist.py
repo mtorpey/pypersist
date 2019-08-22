@@ -68,6 +68,8 @@ def test_unpicklable():
         """Returns a function that multiplies by x"""
         return lambda i: x * i
 
+    multiplier.clear()
+
     # lambdas cannot be pickled, so this raises an error
     with pytest.raises(Exception):
         f = multiplier(3)
