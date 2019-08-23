@@ -1,4 +1,3 @@
-dist: bionic
 language: python
 services:
   - mongodb  # this might not launch fast enough - we could need a delay
