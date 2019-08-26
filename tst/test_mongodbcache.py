@@ -8,7 +8,7 @@ from requests import ConnectionError
 from time import sleep
 from datetime import datetime
 
-SLEEP_TIME = 0.5
+SLEEP_TIME = 1.0
 
 
 def test_mongo():
