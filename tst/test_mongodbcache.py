@@ -4,6 +4,8 @@ from pypersist import persist
 from pypersist.commoncache import HashCollisionError
 
 import subprocess
+import os
+from signal import SIGTERM
 from requests import ConnectionError
 from time import sleep
 from datetime import datetime
@@ -13,7 +15,7 @@ SLEEP_TIME = 1.0
 
 def test_mongo():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -44,12 +46,12 @@ def test_mongo():
         assert ke.value.args[0] == (("x", 5),)
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_hash():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -77,12 +79,12 @@ def test_hash():
         assert len(pow.cache) == 6
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_storekey():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -123,12 +125,12 @@ def test_storekey():
         ]
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_hash_collision():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -159,12 +161,12 @@ def test_hash_collision():
         assert hce.value.args[0] != hce.value.args[1]
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_unhash():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -198,12 +200,12 @@ def test_unhash():
         ]
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_unhash_collision():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -226,7 +228,7 @@ def test_unhash_collision():
         assert hce.value.args == (16, 12)
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
 
 
 def test_noserver():
@@ -242,7 +244,7 @@ def test_noserver():
 
 def test_metadata():
     mongo_process = subprocess.Popen(
-        "python mongodb_server/run.py", shell=True
+        "python mongodb_server/run.py", shell=True, preexec_fn=os.setsid
     )
     sleep(SLEEP_TIME)
     try:
@@ -270,4 +272,4 @@ def test_metadata():
         assert len(meta) == len("Result cached at 2019-02-28 14:16:19.887012")
 
     finally:
-        mongo_process.kill()
+        os.killpg(os.getpgid(mongo_process.pid), SIGTERM)  # kill server
