@@ -75,7 +75,7 @@ Citing
 ------
 Please cite this package as:
 
-[Tor19] 
+[Tor20] 
 M. Torpey, 
 pypersist, 
 Python memoisation framework,
