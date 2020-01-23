@@ -10,9 +10,18 @@ from datetime import datetime
 
 SLEEP_TIME = 1.0
 
+try:
+    from sage.all import *
+
+    # use sage's python
+    RUN_SERVER = ["sage", "-python", "mongodb_server/run.py"]
+except ImportError:
+    # use system python
+    RUN_SERVER = ["python", "mongodb_server/run.py"]
+
 
 def test_mongo():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -46,7 +55,7 @@ def test_mongo():
 
 
 def test_hash():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -77,7 +86,7 @@ def test_hash():
 
 
 def test_storekey():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -121,7 +130,7 @@ def test_storekey():
 
 
 def test_hash_collision():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -155,7 +164,7 @@ def test_hash_collision():
 
 
 def test_unhash():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -192,7 +201,7 @@ def test_unhash():
 
 
 def test_unhash_collision():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
@@ -229,7 +238,7 @@ def test_noserver():
 
 
 def test_metadata():
-    mongo_process = subprocess.Popen(["python", "mongodb_server/run.py"])
+    mongo_process = subprocess.Popen(RUN_SERVER)
     sleep(SLEEP_TIME)
     try:
 
