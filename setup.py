@@ -11,6 +11,7 @@ setup(
     name="pypersist",
     version=read("VERSION"),
     description="Persistent memoisation framework for Python",
+    Description_Content_Type="text/plain",
     url="https://github.com/mtorpey/pypersist",
     author="Michael Torpey",
     author_email="mct25@st-andrews.ac.uk",
@@ -25,5 +26,6 @@ setup(
     install_requires=read("requirements.txt").split("\n"),
     include_package_data=True,
     long_description=read("README.md"),
+    long_description_content_type="text/markdown",
     zip_safe=False,
 )
