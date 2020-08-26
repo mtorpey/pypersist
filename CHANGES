@@ -1,5 +1,8 @@
 This file describes changes to pypersist since the initial release.
 
+1.1 (2020-08-26)
+  - Add verbosity options
+
 1.0 (2020-01-23)
   - Update support for latest Sage
   - Major version number indicating a mature project

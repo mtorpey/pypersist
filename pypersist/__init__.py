@@ -17,6 +17,7 @@ def persist(
     hash=hashing.hash,
     unhash=None,
     metadata=None,
+    verbosity=0,
 ):
     """Function decorator for persistent memoisation
 
@@ -85,6 +86,12 @@ def persist(
         metadata to be stored with the result currently being written.  This
         might include the current time, or some data identifying the user or
         system that ran the computation.
+    verbosity : int , optional
+        What level of verbosity to output when running. If 0, nothing will
+        print. If 1, prints when writing to files, clearing all cache and all
+        error messages. If 2, prints getting, writing, clearing and deleting
+        messages. If 3, prints detailed information on getting, writing,
+        clearing and deleting cache.
 
     Attributes
     ----------
@@ -165,6 +172,7 @@ def persist(
             else:
                 self._funcname = funcname
             self._metadata = metadata
+            self._verbosity = verbosity
 
             # Determine which backend to use
             try:
