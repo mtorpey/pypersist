@@ -96,10 +96,10 @@ class Cache:
             val = self._func._unpickle(file.read())
             file.close()
         else:
-            # Print errors if high enough verbosity.
-            if self._func._verbosity > 0:
+            # Not found in cache (not a problem, just a new value)
+            if self._func._verbosity >= 3:
                 print(
-                    "Error getting {key} as {fname} does not exist.".format(
+                    "No entry for {key} as {fname} does not exist.".format(
                         key=key, fname=fname
                     )
                 )

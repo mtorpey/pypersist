@@ -227,11 +227,12 @@ def test_unhash():
     ]
 
 
-def test_unhash_collision():
+def test_unhash_collision(capsys):
     @persist(
         key=lambda x: x,
         hash=lambda k: "16",  # same as hash=str for x==16 only
         unhash=int,
+        verbosity=1,
     )
     def square(x):
         return x * x
@@ -243,6 +244,9 @@ def test_unhash_collision():
     with pytest.raises(HashCollisionError) as hce:
         square(12)
     assert hce.value.args == (16, 12)
+    out, err = capsys.readouterr()
+    test_str = r"Key (.*) does not match stored key (.*)."
+    assert re.match(test_str, out, re.MULTILINE)
 
 
 def test_metadata():
@@ -324,15 +328,13 @@ def test_verbosity(capsys):
     double_1(1)
     double_1.clear()
     out, err = capsys.readouterr()
-    test_str = r'^Error getting .* does not exist.'
-    assert re.match(test_str, out)
+    assert len(out) == 0
 
     double_2(1)
     double_2(1)
     double_2.clear()
     out, err = capsys.readouterr()
-    test_str = r'^Error getting .* does not exist.\n'
-    test_str += r'Writing to files.\n'
+    test_str = r'Writing to files.\n'
     test_str += r'Clearing cache.'
     assert re.match(test_str, out, re.MULTILINE)
 
@@ -341,7 +343,7 @@ def test_verbosity(capsys):
     double_3.clear()
     out, err = capsys.readouterr()
     test_str = r'^Getting cache.\n'
-    test_str += r'Error getting .* does not exist.\n'
+    test_str += r'^No entry for .* as .* does not exist.\n'
     test_str += r'Writing to .*\n'
     test_str += r'Done writing .*\n'
     test_str += r'Done writing all files.\n'
@@ -356,7 +358,7 @@ def test_verbosity(capsys):
     double_4.clear()
     out, err = capsys.readouterr()
     test_str = r'^Getting key .*\n'
-    test_str += r'Error getting .* does not exist.\n'
+    test_str += r'^No entry for .* as .* does not exist.\n'
     test_str += r'Writing .*\n'
     test_str += r'Done writing .*\n'
     test_str += r'Done writing all files.\n'

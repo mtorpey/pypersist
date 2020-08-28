@@ -97,12 +97,12 @@ def persist(
         metadata to be stored with the result currently being written.  This
         might include the current time, or some data identifying the user or
         system that ran the computation.
-    verbosity : int , optional
-        What level of verbosity to output when running. If 0, nothing will
-        print. If 1, prints all error messages. If 1, prints when writing to
-        files, clearing all cache and all error messages. If 3, prints getting,
-        writing, clearing and deleting messages. If 4, prints detailed
-        information on getting, writing, clearing and deleting cache.
+    verbosity : int, optional
+        What level of verbosity to output when running.  If 0, nothing will be
+        printed.  If 1, prints only when something goes wrong.  If 2, also
+        prints when writing to files or clearing the cache.  If 3, also prints
+        when reading from the cache.  If 4, it includes all the above with more
+        details.  Defaults to 0.
 
     Attributes
     ----------
