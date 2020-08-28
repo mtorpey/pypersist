@@ -353,17 +353,46 @@ def test_verbosity(capsys):
     test_str += r'Cache cleared.'
     assert re.match(test_str, out, re.MULTILINE)
 
+    double_3(1)
+    del double_3.cache[(('x', 1),)]
+    out, err = capsys.readouterr()
+    test_str = r'^Getting cache.\n'
+    test_str += r'^No entry for .* as .* does not exist.\n'
+    test_str += r'Writing to .*\n'
+    test_str += r'Done writing .*\n'
+    test_str += r'Done writing all files.\n'
+    test_str += r'Deleting cache item.\n'
+    test_str += r'Done deleting cache item.\n'
+    assert re.match(test_str, out, re.MULTILINE)
+
     double_4(1)
-    double_4(1)
-    double_4.clear()
     out, err = capsys.readouterr()
     test_str = r'^Getting key .*\n'
     test_str += r'^No entry for .* as .* does not exist.\n'
     test_str += r'Writing .*\n'
     test_str += r'Done writing .*\n'
     test_str += r'Done writing all files.\n'
-    test_str += r'Getting key .*\n'
+    assert re.match(test_str, out, re.MULTILINE)
+
+    double_4(1)
+    out, err = capsys.readouterr()
+    test_str = r'Getting key .*\n'
     test_str += r'Done reading cache.\n'
-    test_str += r'Clearing cache.\n'
+    assert re.match(test_str, out, re.MULTILINE)
+
+    del double_4.cache[(('x', 1),)]
+    out, err = capsys.readouterr()
+    test_str = r'Deleting cache item .* in file .*.\n'
+    test_str += r'File .* deleted.\n'
+    test_str += r'Deleting cache item .* in file .*.\n'
+    test_str += r'File .* deleted.\n'
+    test_str += r'Deleting cache item .* in file .*.\n'
+    test_str += r'File .* deleted.\n'
+    test_str += r'Done deleting cache item.\n'
+    assert re.match(test_str, out, re.MULTILINE)
+
+    double_4.clear()
+    out, err = capsys.readouterr()
+    test_str = r'Clearing cache.\n'
     test_str += r'Cache cleared.'
     assert re.match(test_str, out, re.MULTILINE)
