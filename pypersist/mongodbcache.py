@@ -12,10 +12,17 @@ To start a MongoDB/REST server for use with this cache, navigate to the
 
 from .commoncache import HashCollisionError
 
-from collections import MutableMapping, Iterator
 from os.path import join
 import requests
 import json
+
+from sys import version_info
+
+PYTHON_VERSION = version_info[0]  # major version number
+if PYTHON_VERSION >= 3:
+    from collections.abc import MutableMapping, Iterator
+else:
+    from collections import MutableMapping, Iterator
 
 
 class Cache:

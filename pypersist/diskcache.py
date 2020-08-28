@@ -10,10 +10,17 @@ classes defined below.
 
 from .commoncache import HashCollisionError
 
-from collections import MutableMapping, Iterator
 from os import makedirs, remove, listdir
 from os.path import exists, join
 from time import sleep
+
+from sys import version_info
+
+PYTHON_VERSION = version_info[0]  # major version number
+if PYTHON_VERSION >= 3:
+    from collections.abc import MutableMapping, Iterator
+else:
+    from collections import MutableMapping, Iterator
 
 
 class Cache:
