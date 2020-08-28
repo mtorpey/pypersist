@@ -11,7 +11,7 @@ from warnings import warn
 
 PYTHON_VERSION = version_info[0]  # major version number
 if PYTHON_VERSION < 3:
-    warnings.warn(
+    warn(
         "Support for Python 2 is deprecated and will be removed soon.",
         DeprecationWarning,
     )
