@@ -10,7 +10,7 @@ classes defined below.
 
 from .commoncache import HashCollisionError
 
-from collections import MutableMapping, Iterator
+from collections.abc import MutableMapping, Iterator
 from os import makedirs, remove, listdir
 from os.path import exists, join
 from time import sleep

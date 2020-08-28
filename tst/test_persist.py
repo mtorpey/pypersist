@@ -7,6 +7,7 @@ from os import listdir
 from os.path import join, exists
 from sys import version_info
 from datetime import datetime
+import re
 
 PYTHON_VERSION = version_info[0]  # major version number
 
@@ -290,3 +291,77 @@ def test_methods():
     assert len(b.this_plus_number.cache) == 2
     assert c.this_plus_number(4) == 7
     assert len(b.this_plus_number.cache) == 2
+
+
+def test_verbosity(capsys):
+    @persist(verbosity=0)
+    def double_0(x):
+        return x * 2
+
+    @persist(verbosity=1)
+    def double_1(x):
+        return x * 2
+
+    @persist(verbosity=2)
+    def double_2(x):
+        return x * 2
+
+    @persist(verbosity=3)
+    def double_3(x):
+        return x * 2
+
+    @persist(verbosity=4)
+    def double_4(x):
+        return x * 2
+
+    double_0(1)
+    double_0(1)
+    double_0.clear()
+    out, err = capsys.readouterr()
+    assert out == ""
+
+    double_1(1)
+    double_1(1)
+    double_1.clear()
+    out, err = capsys.readouterr()
+    test_str = r'^Error getting .* does not exist.'
+    assert re.match(test_str, out)
+
+    double_2(1)
+    double_2(1)
+    double_2.clear()
+    out, err = capsys.readouterr()
+    test_str = r'^Error getting .* does not exist.\n'
+    test_str += r'Writing to files.\n'
+    test_str += r'Clearing cache.'
+    assert re.match(test_str, out, re.MULTILINE)
+
+    double_3(1)
+    double_3(1)
+    double_3.clear()
+    out, err = capsys.readouterr()
+    test_str = r'^Getting cache.\n'
+    test_str += r'Error getting .* does not exist.\n'
+    test_str += r'Writing to .*\n'
+    test_str += r'Done writing .*\n'
+    test_str += r'Done writing all files.\n'
+    test_str += r'Getting cache.\n'
+    test_str += r'Done reading cache.\n'
+    test_str += r'Clearing cache.\n'
+    test_str += r'Cache cleared.'
+    assert re.match(test_str, out, re.MULTILINE)
+
+    double_4(1)
+    double_4(1)
+    double_4.clear()
+    out, err = capsys.readouterr()
+    test_str = r'^Getting key .*\n'
+    test_str += r'Error getting .* does not exist.\n'
+    test_str += r'Writing .*\n'
+    test_str += r'Done writing .*\n'
+    test_str += r'Done writing all files.\n'
+    test_str += r'Getting key .*\n'
+    test_str += r'Done reading cache.\n'
+    test_str += r'Clearing cache.\n'
+    test_str += r'Cache cleared.'
+    assert re.match(test_str, out, re.MULTILINE)

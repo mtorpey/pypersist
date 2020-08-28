@@ -12,7 +12,7 @@ To start a MongoDB/REST server for use with this cache, navigate to the
 
 from .commoncache import HashCollisionError
 
-from collections import MutableMapping, Iterator
+from collections.abc import MutableMapping, Iterator
 from os.path import join
 import requests
 import json
