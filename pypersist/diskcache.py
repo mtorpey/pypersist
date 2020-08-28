@@ -56,24 +56,23 @@ class Cache:
         fname = self._key_to_fname(key, OUT)
 
         # print that we are getting cache depending on verbosity.
-        if (self._func._verbosity == 3):
+        if self._func._verbosity == 3:
             print("Getting cache.")
-        elif (self._func._verbosity > 3):
-            print("Getting key {key} from {fname}.".format(
-                key=key,
-                fname=fname,
-            ))
+        elif self._func._verbosity > 3:
+            print(
+                "Getting key {key} from {fname}.".format(key=key, fname=fname)
+            )
 
         if self._func._unhash:
             storedkey = self._fname_to_key(fname)
             if storedkey != key:
                 # Print errors if high enough verbosity.
-                if (self._func._verbosity > 0):
-                    print("Key ({key}) does not match stored key ({storedkey})."
-                          .format(
-                              key=key,
-                              storedkey=storedkey,
-                          ))
+                if self._func._verbosity > 0:
+                    print(
+                        "Key ({key}) does not match stored key ({storedkey}).".format(
+                            key=key, storedkey=storedkey
+                        )
+                    )
                 raise HashCollisionError(storedkey, key)
 
         if exists(fname):
@@ -91,15 +90,16 @@ class Cache:
             file.close()
         else:
             # Print errors if high enough verbosity.
-            if (self._func._verbosity > 0):
-                print("Error getting {key} as {fname} does not exist.".format(
-                    key=key,
-                    fname=fname,
-                ))
+            if self._func._verbosity > 0:
+                print(
+                    "Error getting {key} as {fname} does not exist.".format(
+                        key=key, fname=fname
+                    )
+                )
             raise KeyError(key)
 
         # print that we are done getting cache.
-        if (self._func._verbosity > 2):
+        if self._func._verbosity > 2:
             print("Done reading cache.")
 
         return val
@@ -131,26 +131,27 @@ class Cache:
         open(lockfname, "w").close()
 
         # print what we're writing with different levels of verbosity
-        if (self._func._verbosity == 2):
+        if self._func._verbosity == 2:
             print("Writing to files.")
 
         # do the file operations
         for (fname, string) in to_write:
-            if (self._func._verbosity == 3):
+            if self._func._verbosity == 3:
                 print("Writing to {fname}".format(fname=fname))
-            elif (self._func._verbosity > 3):
-                print("Writing {string} to {fname}".format(
-                    string=string,
-                    fname=fname,
-                ))
+            elif self._func._verbosity > 3:
+                print(
+                    "Writing {string} to {fname}".format(
+                        string=string, fname=fname
+                    )
+                )
             file = open(fname, "w")
             file.write(string)
             file.close()
-            if (self._func._verbosity > 2):
+            if self._func._verbosity > 2:
                 print("Done writing {fname}.".format(fname=fname))
 
         # print that files have been written
-        if (self._func._verbosity > 2):
+        if self._func._verbosity > 2:
             print("Done writing all files.")
 
         # unlock this result
@@ -162,18 +163,19 @@ class Cache:
             sleep(0.1)  # wait before reading
 
         # print what we're deleting depending on verbosity.
-        if (self._func._verbosity == 3):
+        if self._func._verbosity == 3:
             print("Deleting cache item.")
 
         for ext in [OUT, KEY, META]:
             fname = self._key_to_fname(key, ext)
 
             # print what we're deleting depending on verbosity.
-            if (self._func._verbosity > 3):
-                print("Deleting cache item {key} in file {fname}.".format(
-                    fname=fname,
-                    key=key,
-                ))
+            if self._func._verbosity > 3:
+                print(
+                    "Deleting cache item {key} in file {fname}.".format(
+                        fname=fname, key=key
+                    )
+                )
 
             if exists(fname):
                 remove(fname)
@@ -181,11 +183,11 @@ class Cache:
                 raise KeyError(key)
 
             # print what we've finished deleting
-            if (self._func._verbosity > 3):
+            if self._func._verbosity > 3:
                 print("File {fname} deleted.".format(fname=fname))
 
         # print that we're done deleting
-        if (self._func._verbosity == 3):
+        if self._func._verbosity == 3:
             print("Done deleting cache item.")
 
     def __len__(self):
@@ -196,7 +198,7 @@ class Cache:
         """Delete all the results stored in this cache"""
 
         # print that we are clearing cache depending on verbosity.
-        if (self._func._verbosity > 1):
+        if self._func._verbosity > 1:
             print("Clearing cache.")
 
         for f in listdir(self._dir):
@@ -205,7 +207,7 @@ class Cache:
             remove(path)
 
         # print that we are done clearing cache depending on verbosity.
-        if (self._func._verbosity > 2):
+        if self._func._verbosity > 2:
             print("Cache cleared.")
 
     def _key_to_fname(self, key, ext):
