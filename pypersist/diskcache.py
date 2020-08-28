@@ -194,7 +194,7 @@ class Cache:
                 print("File {fname} deleted.".format(fname=fname))
 
         # print that we're done deleting
-        if self._func._verbosity == 3:
+        if self._func._verbosity >= 3:
             print("Done deleting cache item.")
 
     def __len__(self):
