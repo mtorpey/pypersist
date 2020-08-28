@@ -2,6 +2,7 @@ This file describes changes to pypersist since the initial release.
 
 1.0.1 (2020-??-??)
   - Add verbosity options
+  - Deprecate support for Python 2
 
 1.0 (2020-01-23)
   - Update support for latest Sage

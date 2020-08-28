@@ -6,6 +6,17 @@ from . import mongodbcache
 from functools import update_wrapper
 
 
+from sys import version_info
+from warnings import warn
+
+PYTHON_VERSION = version_info[0]  # major version number
+if PYTHON_VERSION < 3:
+    warnings.warn(
+        "Support for Python 2 is deprecated and will be removed soon.",
+        DeprecationWarning,
+    )
+
+
 def persist(
     func=None,
     cache="file://persist/",
