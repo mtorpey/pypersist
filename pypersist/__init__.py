@@ -28,7 +28,7 @@ def persist(
     hash=hashing.hash,
     unhash=None,
     metadata=None,
-    verbosity=0,
+    verbosity=1,
 ):
     """Function decorator for persistent memoisation
 
@@ -102,7 +102,7 @@ def persist(
         printed.  If 1, prints only when something goes wrong.  If 2, also
         prints when writing to files or clearing the cache.  If 3, also prints
         when reading from the cache.  If 4, it includes all the above with more
-        details.  Defaults to 0.
+        details.  Defaults to 1.
 
     Attributes
     ----------
