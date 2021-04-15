@@ -27,5 +27,6 @@ script:
     else
       python -m pytest --cov=./pypersist;
     fi;
+    env;
 after_success:
   - codecov
